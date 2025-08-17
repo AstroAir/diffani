@@ -1,0 +1,473 @@
+.projectManager {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 400px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    min-width: 320px;
+    max-width: 100%;
+    max-height: 90vh;
+  }
+}
+
+.notification {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 122, 204, 0.9);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+.notificationClose {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+.headerIcon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #ccc;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    color: #007acc;
+    border-bottom-color: #007acc;
+    background: rgba(0, 122, 204, 0.1);
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+// History Panel Styles
+.historyPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.historySection {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.clearButton {
+  background: none;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  color: #ff6b6b;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: #ff6b6b;
+  }
+}
+
+.historyList {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.historyInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.filename {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.timestamp {
+  color: #999;
+  font-size: 12px;
+}
+
+.historyStatus {
+  margin-left: 12px;
+}
+
+.success {
+  color: #4caf50;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.emptyMessage {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+  margin: 0;
+}
+
+// Backups Panel Styles
+.backupsPanel {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.backupsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.createBackupButton {
+  background: #007acc;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #0066aa;
+  }
+}
+
+.backupsList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.backupItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  margin-bottom: 8px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+}
+
+.backupInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.backupReason {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.backupTimestamp {
+  color: #999;
+  font-size: 12px;
+}
+
+.backupSize {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.backupActions {
+  display: flex;
+  gap: 8px;
+}
+
+.restoreButton,
+.deleteButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.restoreButton {
+  background: #28a745;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #34ce57;
+  }
+}
+
+.deleteButton {
+  background: #ff6b6b;
+  color: #fff;
+
+  &:hover {
+    background: #ff5252;
+  }
+}
+
+// Templates Panel Styles
+.templatesPanel {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.templatesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.refreshButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+}
+
+.templatesList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.templateItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  margin-bottom: 8px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+}
+
+.templateInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.templateName {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.templateDescription {
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.templateCategory {
+  color: #007acc;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(0, 122, 204, 0.2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+}
+
+.templateActions {
+  display: flex;
+  gap: 8px;
+}
+
+.useTemplateButton {
+  background: #007acc;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #0066aa;
+  }
+}

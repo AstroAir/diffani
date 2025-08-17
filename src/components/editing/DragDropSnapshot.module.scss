@@ -1,0 +1,347 @@
+/* Drag and Drop Snapshots Styles */
+.snapshotsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  height: 100%;
+  overflow-y: auto;
+  padding-right: var(--spacing-xs);
+
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.snapshotItem {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  position: relative;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &.active {
+    border-color: var(--accent-color);
+    background: rgba(0, 122, 204, 0.1);
+    box-shadow: 0 0 10px rgba(0, 122, 204, 0.2);
+  }
+
+  &.selected {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg) scale(1.05);
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-color);
+    background: rgba(0, 122, 204, 0.15);
+  }
+}
+
+.snapshotHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  cursor: grab;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    cursor: grabbing;
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+.snapshotCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+.snapshotButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(2px);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+  }
+
+  &:active {
+    transform: translateX(1px) scale(0.98);
+  }
+}
+
+.snapshotNumber {
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 24px;
+  color: var(--accent-color);
+}
+
+.snapshotProgress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), #00d4ff);
+  transition: width var(--transition-normal);
+  border-radius: 2px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+.deleteSnapshotButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.2);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:focus {
+    outline: 2px solid #ff6b6b;
+    outline-offset: 2px;
+  }
+}
+
+.snapshotDetails {
+  padding: 0 var(--spacing-sm) var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.snapshotProperty {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+
+  label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+}
+
+.durationValue,
+.transitionValue {
+  color: var(--text-secondary);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 11px;
+}
+
+.durationValue {
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: scale(1.05);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.durationInput {
+  width: 60px;
+  padding: 2px 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Drag overlay styles */
+:global(.dnd-kit-drag-overlay) {
+  .snapshotItem {
+    transform: rotate(5deg) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-color);
+    background: rgba(0, 122, 204, 0.15);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .snapshotItem {
+    font-size: 11px;
+  }
+  
+  .snapshotHeader {
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
+  }
+  
+  .dragHandle {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  .snapshotCheckbox {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .deleteSnapshotButton {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .snapshotDetails {
+    padding: 0 var(--spacing-xs) var(--spacing-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .snapshotsList {
+    gap: var(--spacing-xs);
+  }
+  
+  .snapshotHeader {
+    flex-wrap: wrap;
+  }
+  
+  .dragHandle {
+    order: -1;
+  }
+}

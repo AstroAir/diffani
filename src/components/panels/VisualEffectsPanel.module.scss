@@ -1,0 +1,406 @@
+/* Visual Effects Panel Styles */
+.visualEffectsPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--border-radius-sm);
+  overflow-y: auto;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.panelTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.advancedToggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 12px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+  }
+}
+
+.presetsSection,
+.configSection,
+.actionsSection,
+.infoSection {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-sm) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.presetCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  &.selected {
+    border-color: var(--accent-color);
+    background: rgba(0, 122, 204, 0.1);
+    box-shadow: 0 0 15px rgba(0, 122, 204, 0.2);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-color), #00d4ff);
+      border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+    }
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+.effectPreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  margin-bottom: var(--spacing-xs);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius-sm);
+  font-family: monospace;
+  font-size: 16px;
+  color: var(--accent-color);
+}
+
+.previewAnimation {
+  animation: previewPulse 2s ease-in-out infinite;
+}
+
+.presetInfo {
+  text-align: center;
+}
+
+.presetName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 2px 0;
+}
+
+.presetDescription {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.configGroup {
+  margin-bottom: var(--spacing-sm);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.configLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.configSelect {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+  
+  option {
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--text-primary);
+  }
+}
+
+.configSlider {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    
+    &:hover {
+      background: #00d4ff;
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(0, 122, 204, 0.5);
+    }
+  }
+  
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    
+    &:hover {
+      background: #00d4ff;
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(0, 122, 204, 0.5);
+    }
+  }
+}
+
+.actionsSection {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.applyButton,
+.previewButton {
+  flex: 1;
+  padding: var(--spacing-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.applyButton {
+  background: var(--accent-color);
+  color: white;
+  
+  &:hover {
+    background: #00d4ff;
+    border-color: #00d4ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.previewButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+  }
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xs);
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: var(--spacing-xs);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--border-radius-sm);
+  
+  label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  
+  span {
+    color: var(--text-secondary);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  }
+}
+
+/* Animations */
+@keyframes previewPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .presetGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actionsSection {
+    flex-direction: column;
+  }
+  
+  .panelHeader {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: stretch;
+  }
+  
+  .advancedToggle {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .visualEffectsPanel {
+    font-size: 11px;
+  }
+  
+  .presetCard {
+    padding: var(--spacing-xs);
+  }
+  
+  .effectPreview {
+    height: 30px;
+    font-size: 14px;
+  }
+  
+  .presetName {
+    font-size: 11px;
+  }
+  
+  .presetDescription {
+    font-size: 9px;
+  }
+  
+  .configSlider {
+    height: 8px;
+    
+    &::-webkit-slider-thumb {
+      width: 18px;
+      height: 18px;
+    }
+    
+    &::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}

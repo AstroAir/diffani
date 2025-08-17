@@ -1,0 +1,363 @@
+/* Enhanced Timeline Styles */
+.enhancedTimeline {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.playButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: #00d4ff;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 122, 204, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.timeDisplay {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.addTrackButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 12px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+  }
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  
+  button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 12px;
+    min-width: 32px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-color);
+    }
+    
+    &:focus {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 1px;
+    }
+  }
+}
+
+.ruler {
+  position: relative;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.rulerMark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rulerLine {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  margin-top: auto;
+}
+
+.rulerLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: 10;
+  cursor: ew-resize;
+}
+
+.playheadLine {
+  width: 100%;
+  height: 100%;
+  background: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+.playheadHandle {
+  position: absolute;
+  top: -4px;
+  left: -6px;
+  width: 14px;
+  height: 12px;
+  background: #ff6b6b;
+  border: 2px solid white;
+  border-radius: 2px;
+  cursor: ew-resize;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: #ff5252;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(255, 107, 107, 0.6);
+  }
+}
+
+.timelineContent {
+  flex: 1;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.1);
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.track {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.trackInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.trackToggle {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.trackName {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.trackType {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.removeTrackButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 107, 107, 0.1);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 16px;
+  
+  &:hover {
+    background: rgba(255, 107, 107, 0.2);
+    transform: scale(1.1);
+  }
+  
+  &:focus {
+    outline: 2px solid #ff6b6b;
+    outline-offset: 1px;
+  }
+}
+
+.trackContent {
+  padding: var(--spacing-sm);
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: stretch;
+  }
+  
+  .controls {
+    justify-content: center;
+  }
+  
+  .zoomControls {
+    justify-content: center;
+  }
+  
+  .playButton {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .timeDisplay {
+    font-size: 12px;
+  }
+  
+  .trackHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .trackInfo {
+    width: 100%;
+  }
+  
+  .removeTrackButton {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .zoomControls {
+    flex-wrap: wrap;
+  }
+  
+  .ruler {
+    height: 30px;
+  }
+  
+  .rulerLine {
+    height: 15px;
+  }
+  
+  .rulerLabel {
+    font-size: 9px;
+  }
+  
+  .playheadHandle {
+    width: 12px;
+    height: 10px;
+    left: -5px;
+  }
+}

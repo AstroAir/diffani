@@ -1,5 +1,6 @@
 import { type ThemeName } from '../theme/index';
 import { type Language } from '../code-languages/languages';
+import { type TransitionConfig } from '../transition/transition';
 
 export interface DocSnapshot {
   id: string;
@@ -10,6 +11,11 @@ export interface DocSnapshot {
    */
   duration: number;
   transitionTime: number;
+  /**
+   * Transition configuration for this snapshot
+   * Optional - will use default if not specified
+   */
+  transitionConfig?: Partial<TransitionConfig>;
 }
 
 export interface DocPadding {

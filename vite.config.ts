@@ -31,4 +31,45 @@ export default defineConfig({
   server: {
     port: 10001,
   },
+  build: {
+    // Optimize bundle size
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks for better caching
+          react: ['react', 'react-dom'],
+          pixi: ['pixi.js'],
+          codemirror: [
+            '@codemirror/view',
+            '@codemirror/state',
+            '@codemirror/language',
+            '@codemirror/commands',
+            'codemirror',
+          ],
+          'codemirror-langs': [
+            '@codemirror/lang-javascript',
+            '@codemirror/lang-python',
+            '@codemirror/lang-cpp',
+            '@codemirror/lang-rust',
+            '@codemirror/lang-css',
+            '@codemirror/lang-html',
+            '@codemirror/lang-json',
+            '@codemirror/lang-sql',
+            '@codemirror/lang-xml',
+          ],
+        },
+      },
+    },
+    // Enable source maps for production debugging
+    sourcemap: true,
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
+  },
 });

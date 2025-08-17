@@ -1,0 +1,327 @@
+/* Dashboard Layout Styles */
+.dashboardLayout {
+  width: 100%;
+  height: 100vh;
+  padding: var(--spacing-lg);
+  background: var(--primary-bg);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--spacing-sm);
+  }
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    'editor preview'
+    'snapshots properties'
+    'transitions tools';
+  gap: var(--spacing-lg);
+  height: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+
+  /* Large tablet layout */
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'editor'
+      'preview'
+      'snapshots'
+      'properties'
+      'transitions'
+      'tools';
+    gap: var(--spacing-md);
+  }
+
+  /* Mobile tablet layout */
+  @media (max-width: 768px) {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+
+    /* Optimize for mobile interaction */
+    grid-template-areas:
+      'preview'
+      'editor'
+      'snapshots'
+      'properties'
+      'transitions'
+      'tools';
+  }
+
+  /* Small mobile layout */
+  @media (max-width: 480px) {
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+
+    /* Stack everything vertically with minimal gaps */
+    grid-template-rows: auto;
+  }
+}
+
+.gridItem {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  transition: all var(--transition-normal);
+
+  &.collapsed {
+    min-height: auto;
+
+    .panelWrapper {
+      height: auto;
+    }
+  }
+
+  /* Grid area assignments */
+  &[data-panel-id='editor'] {
+    grid-area: editor;
+    min-height: 400px;
+
+    @media (max-width: 768px) {
+      min-height: 300px;
+    }
+
+    @media (max-width: 480px) {
+      min-height: 250px;
+    }
+  }
+
+  &[data-panel-id='preview'] {
+    grid-area: preview;
+    min-height: 400px;
+
+    @media (max-width: 768px) {
+      min-height: 350px; /* Prioritize preview on mobile */
+    }
+
+    @media (max-width: 480px) {
+      min-height: 300px;
+    }
+  }
+
+  &[data-panel-id='snapshots'] {
+    grid-area: snapshots;
+    min-height: 200px;
+
+    @media (max-width: 768px) {
+      min-height: 180px;
+    }
+
+    @media (max-width: 480px) {
+      min-height: 150px;
+    }
+  }
+
+  &[data-panel-id='properties'] {
+    grid-area: properties;
+    min-height: 200px;
+
+    @media (max-width: 768px) {
+      min-height: 160px;
+    }
+
+    @media (max-width: 480px) {
+      min-height: 120px;
+    }
+  }
+
+  &[data-panel-id='transitions'] {
+    grid-area: transitions;
+    min-height: 150px;
+
+    @media (max-width: 768px) {
+      min-height: 140px;
+    }
+
+    @media (max-width: 480px) {
+      min-height: 120px;
+    }
+  }
+
+  &[data-panel-id='tools'] {
+    grid-area: tools;
+    min-height: 150px;
+
+    @media (max-width: 768px) {
+      min-height: 140px;
+    }
+
+    @media (max-width: 480px) {
+      min-height: 120px;
+    }
+  }
+}
+
+.panelWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: var(--shadow-medium);
+  }
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 48px;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 44px;
+  }
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+}
+
+.panelActions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.collapseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 12px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+.panelContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--spacing-lg);
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Animation for panel state changes */
+@keyframes panelExpand {
+  from {
+    max-height: 48px;
+    opacity: 0.7;
+  }
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+@keyframes panelCollapse {
+  from {
+    max-height: 1000px;
+    opacity: 1;
+  }
+  to {
+    max-height: 48px;
+    opacity: 0.7;
+  }
+}
+
+.gridItem:not(.collapsed) .panelWrapper {
+  animation: panelExpand 0.3s var(--smooth) forwards;
+}
+
+.gridItem.collapsed .panelWrapper {
+  animation: panelCollapse 0.3s var(--smooth) forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .gridContainer {
+    grid-template-columns: 1fr;
+
+    .gridItem {
+      &[data-panel-id='editor'],
+      &[data-panel-id='preview'] {
+        min-height: 350px;
+      }
+
+      &[data-panel-id='snapshots'],
+      &[data-panel-id='properties'] {
+        min-height: 180px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .gridContainer {
+    .gridItem {
+      &[data-panel-id='editor'],
+      &[data-panel-id='preview'] {
+        min-height: 300px;
+      }
+
+      &[data-panel-id='snapshots'],
+      &[data-panel-id='properties'],
+      &[data-panel-id='transitions'],
+      &[data-panel-id='tools'] {
+        min-height: 150px;
+      }
+    }
+  }
+}

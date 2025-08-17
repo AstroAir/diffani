@@ -1,0 +1,287 @@
+/* Lazy Component Styles */
+.lazyComponent {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  
+  /* Optimize for performance */
+  contain: layout style paint;
+  will-change: contents;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-muted);
+  font-size: 14px;
+  position: relative;
+  
+  /* Skeleton loading animation */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+.error {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.errorContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-primary);
+  
+  h3 {
+    margin: 0 0 var(--spacing-sm) 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ff6b6b;
+  }
+  
+  p {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 300px;
+    line-height: 1.4;
+  }
+}
+
+.retryButton {
+  background: var(--accent-color);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: #00d4ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+/* Loading states */
+.lazyComponent {
+  &[data-loading="true"] {
+    .placeholder {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--accent-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+}
+
+/* Intersection observer states */
+.lazyComponent {
+  &[data-visible="false"] {
+    .placeholder {
+      background: rgba(255, 255, 255, 0.01);
+      border-style: dotted;
+      
+      &::before {
+        display: none;
+      }
+    }
+  }
+  
+  &[data-visible="true"] {
+    .placeholder {
+      background: rgba(255, 255, 255, 0.02);
+      border-style: dashed;
+    }
+  }
+}
+
+/* Performance optimizations */
+.lazyComponent {
+  /* Enable hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  
+  /* Optimize repaints */
+  backface-visibility: hidden;
+  
+  /* Contain layout changes */
+  contain: layout style paint;
+}
+
+.content {
+  /* Optimize for smooth transitions */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .placeholder {
+    font-size: 12px;
+    padding: var(--spacing-md);
+  }
+  
+  .errorContent {
+    padding: var(--spacing-md);
+    
+    h3 {
+      font-size: 14px;
+    }
+    
+    p {
+      font-size: 12px;
+    }
+  }
+  
+  .retryButton {
+    font-size: 11px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .placeholder {
+    font-size: 11px;
+    padding: var(--spacing-sm);
+  }
+  
+  .errorContent {
+    padding: var(--spacing-sm);
+    
+    h3 {
+      font-size: 13px;
+    }
+    
+    p {
+      font-size: 11px;
+      max-width: 250px;
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .placeholder::before {
+    animation: none;
+  }
+  
+  .lazyComponent[data-loading="true"] .placeholder::after {
+    animation: none;
+    border: 2px solid var(--accent-color);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .placeholder {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .error {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+  }
+  
+  .errorContent h3 {
+    color: #ff8a80;
+  }
+}
+
+/* Print styles */
+@media print {
+  .lazyComponent {
+    .placeholder {
+      display: none;
+    }
+    
+    .content {
+      opacity: 1;
+      animation: none;
+    }
+  }
+}

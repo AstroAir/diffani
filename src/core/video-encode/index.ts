@@ -6,6 +6,7 @@ import { sleep } from '../../utils/sleep';
 interface VideoEncodeOptions {
   frameRate?: number;
   onProgress?: (progress: number) => void;
+  onFPSUpdate?: (actualFPS: number, frameDrops: number) => void;
 }
 
 export class VideoEncoder {
@@ -16,6 +17,12 @@ export class VideoEncoder {
   readonly dedupeFrames: number[];
 
   private aborted = false;
+
+  private frameDrops = 0;
+
+  private lastFPSUpdate = 0;
+
+  private encodedFrameCount = 0;
 
   constructor(
     private readonly doc: RawDoc,
@@ -69,7 +76,7 @@ export class VideoEncoder {
   async encode(): Promise<Blob> {
     const { renderer, frameCount, frameDuration, dedupeFrames } = this;
     await renderer.readyPromise;
-    const { onProgress } = this.options;
+    const { onProgress, onFPSUpdate } = this.options;
     const writer = new WebMWriter({
       quality: 0.9,
       frameDuration,
@@ -78,6 +85,11 @@ export class VideoEncoder {
     });
 
     console.time('encode');
+    const startTime = performance.now();
+    this.encodedFrameCount = 0;
+    this.frameDrops = 0;
+    this.lastFPSUpdate = startTime;
+
     for (let i = 0; i < dedupeFrames.length; i++) {
       const frameIndex = dedupeFrames[i];
       const time = frameIndex * frameDuration;
@@ -86,11 +98,32 @@ export class VideoEncoder {
           ? frameCount - frameIndex
           : dedupeFrames[i + 1] - frameIndex;
 
+      const frameStartTime = performance.now();
       renderer.render(time);
 
       console.log('add frame', frameIndex, n, time);
 
       writer.addFrame(renderer.canvas, n * frameDuration);
+      this.encodedFrameCount++;
+
+      // Calculate actual FPS and frame drops
+      const frameEndTime = performance.now();
+      const frameRenderTime = frameEndTime - frameStartTime;
+      const targetFrameTime = 1000 / this.frameRate;
+
+      if (frameRenderTime > targetFrameTime * 1.5) {
+        this.frameDrops++;
+      }
+
+      // Update FPS monitoring every 500ms
+      if (frameEndTime - this.lastFPSUpdate > 500) {
+        const actualFPS =
+          this.encodedFrameCount / ((frameEndTime - startTime) / 1000);
+        if (onFPSUpdate) {
+          onFPSUpdate(actualFPS, this.frameDrops);
+        }
+        this.lastFPSUpdate = frameEndTime;
+      }
 
       if (onProgress !== undefined) {
         onProgress(i / dedupeFrames.length);

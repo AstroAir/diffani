@@ -1,0 +1,132 @@
+.statusIndicator {
+  position: fixed;
+  top: var(--spacing-xl);
+  right: var(--spacing-xl);
+  z-index: 1000;
+  min-width: 300px;
+  max-width: 400px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-md);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-heavy);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  
+  &.visible {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  &.success {
+    border-left: 4px solid #10b981;
+    
+    .progressBar {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+  }
+  
+  &.info {
+    border-left: 4px solid var(--accent-color);
+    
+    .progressBar {
+      background: linear-gradient(90deg, var(--accent-color), var(--accent-hover));
+    }
+  }
+  
+  &.warning {
+    border-left: 4px solid #f59e0b;
+    
+    .progressBar {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+  }
+  
+  &.error {
+    border-left: 4px solid #ef4444;
+    
+    .progressBar {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+  }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  position: relative;
+}
+
+.icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.message {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: scale(1.1);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  animation: progressAnimation 5s linear forwards;
+}
+
+@keyframes progressAnimation {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@media (max-width: 768px) {
+  .statusIndicator {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    left: var(--spacing-md);
+    min-width: auto;
+    max-width: none;
+  }
+}

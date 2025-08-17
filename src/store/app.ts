@@ -15,6 +15,13 @@ export interface AppSliceState {
   currentTime: number;
 
   playing: boolean;
+
+  // Frame rate control settings
+  frameRate: number;
+
+  // FPS monitoring
+  actualFPS: number;
+  frameDrops: number;
 }
 
 export const initialState: AppSliceState = {
@@ -85,6 +92,13 @@ export const initialState: AppSliceState = {
   currentTime: 0,
 
   playing: false,
+
+  // Frame rate control settings
+  frameRate: 60, // Default to 60 FPS
+
+  // FPS monitoring
+  actualFPS: 0,
+  frameDrops: 0,
 };
 
 export interface AppSliceAction {
@@ -100,7 +114,14 @@ export interface AppSliceAction {
 
   deleteSnapshot: (index: number) => void;
 
+  reorderSnapshots: (oldIndex: number, newIndex: number) => void;
+
   setPlaying: (playing: boolean) => void;
+
+  // Frame rate control actions
+  setFrameRate: (frameRate: number) => void;
+
+  updateFPSMonitoring: (actualFPS: number, frameDrops: number) => void;
 }
 
 function reviseStateCurrentTime<
@@ -208,7 +229,34 @@ export const createAppSlice: StateCreator<
     });
   },
 
+  reorderSnapshots(oldIndex, newIndex) {
+    set((state) => {
+      const snapshots = [...state.doc.snapshots];
+      const [movedSnapshot] = snapshots.splice(oldIndex, 1);
+      snapshots.splice(newIndex, 0, movedSnapshot);
+
+      const newDoc = {
+        ...state.doc,
+        snapshots,
+      };
+
+      return reviseStateCurrentTime({
+        doc: newDoc,
+        currentTime: state.currentTime,
+      });
+    });
+  },
+
   setPlaying(playing) {
     set({ playing });
+  },
+
+  // Frame rate control actions
+  setFrameRate(frameRate) {
+    set({ frameRate });
+  },
+
+  updateFPSMonitoring(actualFPS, frameDrops) {
+    set({ actualFPS, frameDrops });
   },
 });

@@ -1,0 +1,149 @@
+.frameRateControl {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 200px;
+  max-width: 280px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    gap: 10px;
+    min-width: 180px;
+    max-width: 240px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+    gap: 8px;
+    min-width: 160px;
+    max-width: 200px;
+    border-radius: 6px;
+  }
+}
+
+.settings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+}
+
+.select {
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+  }
+}
+
+.monitoring {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fpsDisplay,
+.frameDrops {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.value {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+
+  &.excellent {
+    color: #4caf50;
+  }
+
+  &.good {
+    color: #8bc34a;
+  }
+
+  &.fair {
+    color: #ff9800;
+  }
+
+  &.poor {
+    color: #f44336;
+  }
+
+  &.idle {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.performanceIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.excellent {
+    background-color: #4caf50;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+  }
+
+  &.good {
+    background-color: #8bc34a;
+    box-shadow: 0 0 6px rgba(139, 195, 74, 0.6);
+  }
+
+  &.fair {
+    background-color: #ff9800;
+    box-shadow: 0 0 6px rgba(255, 152, 0, 0.6);
+  }
+
+  &.poor {
+    background-color: #f44336;
+    box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
+  }
+
+  &.idle {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.status {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: capitalize;
+}

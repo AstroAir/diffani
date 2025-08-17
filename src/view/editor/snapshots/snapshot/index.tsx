@@ -5,6 +5,7 @@ import { useStore } from '../../../../store';
 import iconMinus from '../../../../assets/icons/minus.svg';
 import styles from './index.module.scss';
 import Icon from '../../../icon';
+import { TransitionControls } from '../../../transition-controls';
 
 interface SnapshotProps {
   deletable: boolean;
@@ -19,6 +20,7 @@ export function Snapshot({
   index,
   progress,
   active,
+  snapshot,
 }: SnapshotProps) {
   const { gotoSnapshot, deleteSnapshot, playing } = useStore(
     useShallow((state) => ({
@@ -30,33 +32,39 @@ export function Snapshot({
 
   return (
     <div className={styles.snapshotWrapper}>
-      <button
-        type="button"
-        className={clsx(styles.snapshot, active && styles.active)}
-        onClick={() => {
-          gotoSnapshot(index);
-        }}
-      >
-        {
-          <span
-            className={styles.progress}
-            style={{ width: `${(playing ? progress : 1) * 100}%` }}
-          />
-        }
-        #{index}
-      </button>
-
-      {deletable && (
+      <div className={styles.snapshotHeader}>
         <button
           type="button"
-          className={styles.delete}
-          title="delete"
+          className={clsx(styles.snapshot, active && styles.active)}
           onClick={() => {
-            deleteSnapshot(index);
+            gotoSnapshot(index);
           }}
         >
-          <Icon name={iconMinus} />
+          {
+            <span
+              className={styles.progress}
+              style={{ width: `${(playing ? progress : 1) * 100}%` }}
+            />
+          }
+          #{index}
         </button>
+
+        {deletable && (
+          <button
+            type="button"
+            className={styles.delete}
+            title="delete"
+            onClick={() => {
+              deleteSnapshot(index);
+            }}
+          >
+            <Icon name={iconMinus} />
+          </button>
+        )}
+      </div>
+
+      {active && (
+        <TransitionControls snapshotIndex={index} snapshot={snapshot} />
       )}
     </div>
   );

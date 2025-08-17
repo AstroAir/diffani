@@ -7,9 +7,26 @@
   padding: 0 12px;
   overflow: hidden;
   color: #ccc;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
 
   &:hover {
     color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: 2px solid #007acc;
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 

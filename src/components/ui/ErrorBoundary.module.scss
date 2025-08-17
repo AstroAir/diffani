@@ -1,0 +1,232 @@
+/* Error Boundary Styles */
+.errorBoundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: var(--spacing-xl);
+  background: rgba(255, 69, 58, 0.05);
+  border: 1px solid rgba(255, 69, 58, 0.2);
+  border-radius: var(--border-radius-lg);
+  margin: var(--spacing-lg);
+}
+
+.errorContainer {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.errorIcon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-lg);
+  animation: pulse 2s infinite;
+}
+
+.errorTitle {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.errorMessage {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.errorDetails {
+  margin: var(--spacing-lg) 0;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.errorSummary {
+  padding: var(--spacing-md);
+  background: rgba(255, 69, 58, 0.1);
+  border-bottom: 1px solid rgba(255, 69, 58, 0.2);
+  cursor: pointer;
+  font-weight: 500;
+  color: #ff6b6b;
+  transition: background-color var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 69, 58, 0.15);
+  }
+
+  &::marker {
+    color: #ff6b6b;
+  }
+}
+
+.errorStack {
+  padding: var(--spacing-md);
+  max-height: 300px;
+  overflow-y: auto;
+
+  h4 {
+    margin: 0 0 var(--spacing-sm) 0;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+
+  pre {
+    margin: 0 0 var(--spacing-md) 0;
+    padding: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-sm);
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+.errorActions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.retryButton,
+.reloadButton {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 120px;
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.retryButton {
+  background: linear-gradient(135deg, var(--accent-color), #0099ff);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 122, 204, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #0099ff, var(--accent-color));
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+.reloadButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .errorBoundary {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md);
+  }
+  
+  .errorIcon {
+    font-size: 36px;
+  }
+  
+  .errorTitle {
+    font-size: 20px;
+  }
+  
+  .errorMessage {
+    font-size: 14px;
+  }
+  
+  .errorStack {
+    max-height: 200px;
+    
+    pre {
+      font-size: 11px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .errorBoundary {
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm);
+  }
+  
+  .errorIcon {
+    font-size: 32px;
+  }
+  
+  .errorTitle {
+    font-size: 18px;
+  }
+  
+  .errorMessage {
+    font-size: 13px;
+  }
+  
+  .retryButton,
+  .reloadButton {
+    width: 100%;
+    max-width: 200px;
+  }
+}

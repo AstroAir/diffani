@@ -15,15 +15,18 @@ import {
   isOffsetTimeInTransition,
 } from '../doc/raw-doc';
 import {
-  applyPositionTransition,
+  // applyPositionTransition, // Unused for now
   applyTransition,
+  applyTransitionEffect,
   computeTransitionState,
+  DEFAULT_TRANSITION_CONFIG,
 } from '../transition/transition';
 import { checkSafeForMonospaceFont, getLastLine } from '../../utils/string';
 import { type Position } from '../../types/base';
 import { Theme } from '../theme/index';
 import { clamp01 } from '../../utils/number';
 import { type Token } from '../tokenize';
+import { memoryOptimizer } from '../../utils/memory-optimizer';
 
 const ASSERT_DOC_MSG =
   'renderer.doc is empty, make sure call setDoc before render';
@@ -48,6 +51,15 @@ export class MovieRenderer {
   private readonly textsContainer = new Container();
 
   private _theme: Theme | null = null;
+
+  // Cache for expensive operations
+  private _cachedTextStyle: TextStyle | null = null;
+  private _cachedTextSize: {
+    width: number;
+    height: number;
+    scale: number;
+  } | null = null;
+  private _cachedMonospaceCharWidth: number | null = null;
 
   currentTime = -1;
 
@@ -77,6 +89,15 @@ export class MovieRenderer {
     this.currentTime = -1;
     this.cachedTexts = [];
     this._theme = null;
+
+    // Clear performance caches when doc changes
+    this._cachedTextStyle = null;
+    this._cachedTextSize = null;
+    this._cachedMonospaceCharWidth = null;
+
+    // Clear memory optimizer caches for this renderer
+    memoryOptimizer.clearCache('renderer-positions');
+    memoryOptimizer.clearCache('renderer-texts');
 
     void this.readyPromise.then(() => {
       this.app.renderer.resize(rawDoc.width, rawDoc.height);
@@ -184,11 +205,24 @@ export class MovieRenderer {
 
     const snapshotView = snapshots[snapshotIndex];
 
-    const textStyle = new TextStyle(this.getBaseTextStyle());
+    // Use cached TextStyle to avoid expensive recreation
+    if (!this._cachedTextStyle) {
+      this._cachedTextStyle = new TextStyle(this.getBaseTextStyle());
+    }
 
-    const textSize = BitmapFontManager.measureText('X', textStyle);
+    // Use cached text measurements
+    if (!this._cachedTextSize) {
+      this._cachedTextSize = BitmapFontManager.measureText(
+        'X',
+        this._cachedTextStyle,
+      );
+    }
 
-    const monospaceCharWidth = textSize.width * textSize.scale;
+    // Use cached monospace character width
+    if (!this._cachedMonospaceCharWidth) {
+      this._cachedMonospaceCharWidth =
+        this._cachedTextSize.width * this._cachedTextSize.scale;
+    }
 
     const positions: Position[] = [];
     let x = 0;
@@ -196,12 +230,12 @@ export class MovieRenderer {
 
     const getTextWidth = (text: string) => {
       if (checkSafeForMonospaceFont(text)) {
-        return monospaceCharWidth * text.length;
+        return this._cachedMonospaceCharWidth! * text.length;
       }
 
       if (text.length === 0) return 0;
 
-      return BitmapFontManager.measureText(text, textStyle).width;
+      return BitmapFontManager.measureText(text, this._cachedTextStyle!).width;
     };
 
     for (const token of snapshotView.tokens) {
@@ -330,9 +364,17 @@ export class MovieRenderer {
     assert(doc, ASSERT_DOC_MSG);
 
     const {
-      raw: { padding },
+      raw: { padding, snapshots },
     } = doc;
-    const transitionState = computeTransitionState(progress);
+
+    // Get transition configuration from the snapshot
+    const leftSnapshot = snapshots[leftSnapshotIndex];
+    const transitionConfig = {
+      ...DEFAULT_TRANSITION_CONFIG,
+      ...leftSnapshot.transitionConfig,
+    };
+
+    const transitionState = computeTransitionState(progress, transitionConfig);
     const { minScrollTop: leftMinScrollTop } =
       this.computeScrollPosition(leftSnapshotIndex);
     const { minScrollTop: rightMinScrollTop } =
@@ -357,20 +399,42 @@ export class MovieRenderer {
         );
         // add
         const token = right[rightIndex];
-        const position = this.getTokenPositions(rightSnapshotIndex)[rightIndex];
+        const basePosition =
+          this.getTokenPositions(rightSnapshotIndex)[rightIndex];
         const text = this.createText(token, rightSnapshotIndex, rightIndex);
+
+        // Apply transition effects for added tokens
+        const { position, alpha, scale } = applyTransitionEffect(
+          transitionState.inProgress,
+          transitionConfig,
+          basePosition,
+          basePosition,
+        );
+
         text.x = position.x;
         text.y = position.y;
-        text.alpha = applyTransition(transitionState.inProgress, 0, 1);
+        text.alpha = alpha;
+        text.scale.set(scale);
         this.textsContainer.addChild(text);
       } else if (rightIndex == null) {
         // delete
         const token = left[leftIndex];
-        const position = this.getTokenPositions(leftSnapshotIndex)[leftIndex];
+        const basePosition =
+          this.getTokenPositions(leftSnapshotIndex)[leftIndex];
         const text = this.createText(token, leftSnapshotIndex, leftIndex);
+
+        // Apply transition effects for deleted tokens (reverse progress)
+        const { position, alpha, scale } = applyTransitionEffect(
+          1 - transitionState.outProgress,
+          transitionConfig,
+          basePosition,
+          basePosition,
+        );
+
         text.x = position.x;
         text.y = position.y;
-        text.alpha = applyTransition(transitionState.outProgress, 1, 0);
+        text.alpha = alpha;
+        text.scale.set(scale);
         this.textsContainer.addChild(text);
       } else {
         // move
@@ -381,14 +445,19 @@ export class MovieRenderer {
           this.getTokenPositions(rightSnapshotIndex)[rightIndex];
 
         const text = this.createText(leftToken, leftSnapshotIndex, leftIndex);
-        const position = applyPositionTransition(
+
+        // Apply transition effects for moved tokens
+        const { position, alpha, scale } = applyTransitionEffect(
           transitionState.moveProgress,
+          transitionConfig,
           leftPosition,
           rightPosition,
         );
+
         text.x = position.x;
         text.y = position.y;
-        text.alpha = 1;
+        text.alpha = alpha;
+        text.scale.set(scale);
         this.textsContainer.addChild(text);
       }
     }

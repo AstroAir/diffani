@@ -1,0 +1,351 @@
+/* Tools Panel Styles */
+.toolsPanel {
+  /* Panel-specific overrides */
+}
+
+.toolsActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.tabButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-sm);
+  padding: 2px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 122, 204, 0.3);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+  }
+}
+
+.toolsContainer {
+  flex: 1;
+  overflow: hidden;
+}
+
+.exportTab,
+.settingsTab,
+.presetsTab {
+  height: 100%;
+  overflow-y: auto;
+
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.exportSection,
+.settingsSection {
+  margin-bottom: var(--spacing-lg);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: var(--spacing-xs);
+}
+
+.exportOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.exportOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+
+  label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+}
+
+.qualitySelect {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 11px;
+  cursor: pointer;
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  option {
+    background: var(--primary-bg);
+    color: var(--text-primary);
+  }
+}
+
+.frameRateDisplay,
+.durationDisplay,
+.resolutionDisplay {
+  color: var(--text-secondary);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.exportProgress {
+  margin-bottom: var(--spacing-md);
+}
+
+.exportError {
+  padding: var(--spacing-sm);
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: var(--border-radius-sm);
+  color: #ff6b6b;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), #00d4ff);
+  border-radius: 4px;
+  transition: width var(--transition-normal);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+.progressText {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  text-align: center;
+  display: block;
+}
+
+.exportButton {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--accent-color), #0099ff);
+  border: none;
+  border-radius: var(--border-radius-md);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left var(--transition-normal);
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+
+      &::before {
+        left: -100%;
+      }
+    }
+  }
+
+  &.exporting {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    animation: exportingPulse 2s ease-in-out infinite;
+  }
+
+  &.complete {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+
+    &:hover {
+      background: linear-gradient(135deg, #45a049, #5cb85c);
+    }
+  }
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes exportingPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tabButtons {
+    gap: 1px;
+    padding: 1px;
+  }
+
+  .tabButton {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+
+  .exportOptions {
+    gap: var(--spacing-xs);
+  }
+
+  .exportOption {
+    font-size: 11px;
+  }
+
+  .sectionTitle {
+    font-size: 12px;
+  }
+
+  .exportButton {
+    padding: var(--spacing-sm);
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .tabButton {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .exportOptions {
+    gap: 4px;
+  }
+
+  .exportButton {
+    padding: 10px;
+    font-size: 11px;
+  }
+}

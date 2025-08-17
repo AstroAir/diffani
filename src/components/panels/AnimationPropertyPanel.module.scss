@@ -1,0 +1,513 @@
+/* Animation Property Panel Styles */
+.animationPropertyPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panelTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.addPropertyButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: #00d4ff;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(0, 122, 204, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.createPropertyForm {
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.formGroup {
+  margin-bottom: var(--spacing-sm);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+.propertyNameInput,
+.propertyTypeSelect {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 13px;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.createButton,
+.cancelButton {
+  flex: 1;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.createButton {
+  background: var(--accent-color);
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background: #00d4ff;
+    border-color: #00d4ff;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.propertyEditor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.propertyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.propertyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.propertyName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.propertyType {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+}
+
+.deletePropertyButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 107, 107, 0.1);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: #ff6b6b;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: rgba(255, 107, 107, 0.2);
+    transform: scale(1.1);
+  }
+  
+  &:focus {
+    outline: 2px solid #ff6b6b;
+    outline-offset: 1px;
+  }
+}
+
+.propertyControls {
+  padding: var(--spacing-sm);
+}
+
+.controlGroup {
+  margin-bottom: var(--spacing-md);
+}
+
+.controlLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Property Control Styles */
+.numberControl,
+.rotationControl,
+.opacityControl {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.slider,
+.rotationSlider,
+.opacitySlider {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    
+    &:hover {
+      background: #00d4ff;
+      transform: scale(1.2);
+    }
+  }
+  
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    
+    &:hover {
+      background: #00d4ff;
+      transform: scale(1.2);
+    }
+  }
+}
+
+.numberInput,
+.rotationInput,
+.opacityInput {
+  width: 60px;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  text-align: center;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+.rotationUnit {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 12px;
+}
+
+.colorControl {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.colorPicker {
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    border-color: var(--accent-color);
+  }
+}
+
+.colorInput {
+  flex: 1;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+.positionControl,
+.scaleControl {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.positionAxis,
+.scaleAxis {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  
+  label {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 12px;
+  }
+}
+
+.positionInput,
+.scaleInput {
+  flex: 1;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  text-align: center;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+.booleanControl {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.booleanCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.booleanLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.textControl {
+  width: 100%;
+}
+
+.textInput,
+.defaultInput {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+  }
+}
+
+.propertyStats {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+  font-size: 11px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  
+  span {
+    color: var(--text-secondary);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  }
+}
+
+.noSelection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-muted);
+  
+  p {
+    margin: 0 0 var(--spacing-sm) 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.hint {
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .animationPropertyPanel {
+    font-size: 11px;
+  }
+  
+  .numberControl,
+  .rotationControl,
+  .opacityControl {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
+  }
+  
+  .colorControl {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .positionControl,
+  .scaleControl {
+    flex-direction: column;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .panelHeader {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: stretch;
+  }
+  
+  .propertyHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .deletePropertyButton {
+    align-self: flex-end;
+  }
+}

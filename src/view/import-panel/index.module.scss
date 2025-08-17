@@ -1,0 +1,393 @@
+.importPanel {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 320px;
+  max-width: 480px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    min-width: 280px;
+    max-width: 100%;
+    padding: 12px;
+  }
+}
+
+.header {
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.dropZone {
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+
+  &:hover,
+  &.dragOver {
+    border-color: #007acc;
+    background: rgba(0, 122, 204, 0.1);
+  }
+
+  p {
+    margin: 8px 0;
+    color: #ccc;
+    font-size: 14px;
+
+    &.supportedFormats {
+      font-size: 12px;
+      color: #999;
+    }
+  }
+}
+
+.uploadIcon {
+  width: 32px;
+  height: 32px;
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+
+.fileList {
+  margin-bottom: 16px;
+}
+
+.fileListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.clearButton {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.1);
+  }
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.fileName {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.fileSize {
+  color: #999;
+  font-size: 12px;
+}
+
+.fileFormat {
+  color: #007acc;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(0, 122, 204, 0.2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+
+  @media (min-width: 480px) {
+    align-self: center;
+  }
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+  margin-left: 8px;
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.2);
+  }
+}
+
+.progressContainer {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #007acc, #00a8ff);
+  transition: width 0.3s ease;
+}
+
+.progressDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+}
+
+.previewContainer {
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 14px;
+  color: #ccc;
+
+  button {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+.previewContent {
+  padding: 12px;
+}
+
+.previewValid {
+  color: #4caf50;
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+}
+
+.previewInvalid {
+  color: #ff6b6b;
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+
+    &.error {
+      font-size: 12px;
+      color: #ff9999;
+      margin-left: 16px;
+    }
+  }
+}
+
+.optionsSection {
+  margin-bottom: 16px;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 0;
+  width: 100%;
+  text-align: left;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.advancedOptions {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.optionGroup {
+  margin-bottom: 12px;
+
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #ccc;
+
+    span {
+      margin-right: 12px;
+    }
+
+    select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: #fff;
+      padding: 6px 8px;
+      font-size: 13px;
+      min-width: 120px;
+
+      &:focus {
+        outline: none;
+        border-color: #007acc;
+      }
+
+      option {
+        background: #2d2d2d;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.checkboxGroup {
+  margin-bottom: 8px;
+
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #ccc;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: #007acc;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.previewButton,
+.importButton,
+.cancelButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.previewButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+}
+
+.importButton {
+  background: #007acc;
+  color: #fff;
+
+  &:hover {
+    background: #0066aa;
+  }
+
+  &:disabled {
+    background: #555;
+    color: #999;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background: #ff6b6b;
+  color: #fff;
+
+  &:hover {
+    background: #ff5252;
+  }
+}

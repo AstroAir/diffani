@@ -1,0 +1,344 @@
+/* Curve Editor Styles */
+.curveEditor {
+  position: relative;
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  
+  /* Performance optimizations */
+  contain: layout style paint;
+  will-change: contents;
+}
+
+.canvas {
+  display: block;
+  cursor: crosshair;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+  }
+  
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
+  }
+  
+  /* Different cursor states */
+  &[data-dragging="true"] {
+    cursor: grabbing;
+  }
+  
+  &[data-readonly="true"] {
+    cursor: default;
+  }
+}
+
+.pointInfo {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs);
+  font-size: 11px;
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  
+  /* Animation */
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInUp 0.2s ease-out forwards;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+  min-width: 80px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  label {
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-right: var(--spacing-xs);
+  }
+  
+  span {
+    color: var(--text-secondary);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 10px;
+  }
+}
+
+/* Curve editor variants */
+.curveEditor.small {
+  .canvas {
+    width: 200px;
+    height: 150px;
+  }
+  
+  .pointInfo {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+}
+
+.curveEditor.large {
+  .canvas {
+    width: 600px;
+    height: 400px;
+  }
+  
+  .pointInfo {
+    font-size: 12px;
+    padding: var(--spacing-sm);
+  }
+}
+
+.curveEditor.readonly {
+  .canvas {
+    cursor: default;
+    background: rgba(0, 0, 0, 0.05);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+}
+
+/* Grid overlay styles */
+.curveEditor[data-grid="true"] {
+  .canvas {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+/* Snap to grid indicator */
+.curveEditor[data-snap="true"] {
+  .canvas {
+    &::after {
+      content: 'SNAP';
+      position: absolute;
+      top: var(--spacing-xs);
+      left: var(--spacing-xs);
+      font-size: 9px;
+      color: var(--accent-color);
+      background: rgba(0, 122, 204, 0.1);
+      padding: 2px 4px;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 122, 204, 0.3);
+      pointer-events: none;
+    }
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .canvas {
+    cursor: default;
+  }
+  
+  .pointInfo {
+    font-size: 12px;
+    padding: var(--spacing-sm);
+    min-width: 100px;
+  }
+  
+  .infoItem {
+    margin-bottom: var(--spacing-xs);
+    
+    label {
+      font-size: 11px;
+    }
+    
+    span {
+      font-size: 11px;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .curveEditor {
+    .canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .pointInfo {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin-top: var(--spacing-xs);
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: center;
+    }
+    
+    .infoItem {
+      margin-bottom: 0;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .curveEditor {
+    .canvas {
+      width: 100%;
+      min-width: 280px;
+      height: 200px;
+    }
+    
+    .pointInfo {
+      font-size: 10px;
+      padding: var(--spacing-xs);
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+    
+    .infoItem {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .curveEditor {
+    border-color: white;
+    background: black;
+  }
+  
+  .canvas {
+    background: black;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .pointInfo {
+    background: black;
+    border-color: white;
+    color: white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
+  
+  .pointInfo {
+    animation: none;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Print styles */
+@media print {
+  .curveEditor {
+    .pointInfo {
+      display: none;
+    }
+    
+    .canvas {
+      border: 1px solid black;
+      background: white;
+    }
+  }
+}
+
+/* Focus styles for accessibility */
+.canvas:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Loading state */
+.curveEditor.loading {
+  .canvas {
+    opacity: 0.5;
+    pointer-events: none;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: var(--accent-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Error state */
+.curveEditor.error {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+  
+  .canvas {
+    background: rgba(255, 107, 107, 0.1);
+    cursor: not-allowed;
+  }
+  
+  .pointInfo {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.9);
+    color: white;
+  }
+}

@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { minimalSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
-import { oneDarkTheme } from '@codemirror/theme-one-dark';
+// import { oneDarkTheme } from '@codemirror/theme-one-dark'; // Replaced with custom theme system
 import { assertNonNull } from '../../../utils/assert';
+import { ThemeManager } from '../../../core/themes/theme-manager';
+import { type CodeTheme } from '../../../core/themes/types';
 import {
   codeMirrorLanguageMap,
   type Language,
@@ -32,6 +34,7 @@ const theme = EditorView.theme(
   },
 );
 const extensionsCompartment = new Compartment();
+const themeCompartment = new Compartment();
 
 export default function CodeEditor({
   value,
@@ -41,7 +44,73 @@ export default function CodeEditor({
 }: CodeEditorProps) {
   const elRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorView>();
+  const [themeManager] = useState(() => new ThemeManager());
+  const [currentTheme, setCurrentTheme] = useState<CodeTheme>(() =>
+    themeManager.getCurrentTheme(),
+  );
   const latestDocRef = useRef(value);
+
+  // Create CodeMirror theme from our theme system
+  const createCodeMirrorTheme = (theme: CodeTheme) => {
+    return EditorView.theme(
+      {
+        '&': {
+          color: theme.colors['editor.foreground'] || '#d4d4d4',
+          backgroundColor: theme.colors['editor.background'] || '#1e1e1e',
+        },
+        '.cm-content': {
+          padding: '16px',
+          caretColor: theme.colors['editorCursor.foreground'] || '#aeafad',
+        },
+        '.cm-focused .cm-cursor': {
+          borderLeftColor: theme.colors['editorCursor.foreground'] || '#aeafad',
+        },
+        '.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection':
+          {
+            backgroundColor:
+              theme.colors['editor.selectionBackground'] || '#264f78',
+          },
+        '.cm-activeLine': {
+          backgroundColor:
+            theme.colors['editor.lineHighlightBackground'] || '#2a2d2e',
+        },
+        '.cm-gutters': {
+          backgroundColor: theme.colors['editor.background'] || '#1e1e1e',
+          color: theme.colors['editorLineNumber.foreground'] || '#858585',
+          border: 'none',
+        },
+        '.cm-activeLineGutter': {
+          backgroundColor:
+            theme.colors['editor.lineHighlightBackground'] || '#2a2d2e',
+          color: theme.colors['editorLineNumber.activeForeground'] || '#c6c6c6',
+        },
+        '.cm-lineNumbers .cm-gutterElement': {
+          color: theme.colors['editorLineNumber.foreground'] || '#858585',
+        },
+        '.cm-foldPlaceholder': {
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: theme.colors['editor.foreground'] || '#d4d4d4',
+        },
+      },
+      { dark: theme.type === 'dark' },
+    );
+  };
+
+  // Listen for theme changes
+  useEffect(() => {
+    const handleThemeChange = (event: CustomEvent) => {
+      setCurrentTheme(event.detail.theme);
+    };
+
+    window.addEventListener('themeChanged', handleThemeChange as EventListener);
+    return () => {
+      window.removeEventListener(
+        'themeChanged',
+        handleThemeChange as EventListener,
+      );
+    };
+  }, []);
 
   const updateListener = useMemo(
     () =>
@@ -65,7 +134,7 @@ export default function CodeEditor({
         extensions: [
           minimalSetup,
           theme,
-          oneDarkTheme,
+          themeCompartment.of(createCodeMirrorTheme(currentTheme)),
           keymap.of([indentWithTab]),
           extensionsCompartment.of([]),
         ],
@@ -73,7 +142,18 @@ export default function CodeEditor({
       parent: assertNonNull(elRef.current),
     });
     editorRef.current = editorView;
-  }, []);
+  }, [currentTheme]);
+
+  // update theme when it changes
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.dispatch({
+        effects: themeCompartment.reconfigure(
+          createCodeMirrorTheme(currentTheme),
+        ),
+      });
+    }
+  }, [currentTheme]);
 
   // update configs
   useEffect(() => {

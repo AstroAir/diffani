@@ -1,4 +1,10 @@
-import { type CSSProperties, useEffect, useMemo, useRef } from 'react';
+import {
+  type CSSProperties,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useShallow } from 'zustand/shallow';
 import { getSumDuration, type RawDoc } from '../../core/doc/raw-doc';
 import { MovieRenderer } from '../../core/renderer';
@@ -7,6 +13,11 @@ import playIcon from '../../assets/icons/play.svg';
 import pauseIcon from '../../assets/icons/pause.svg';
 import Icon from '../icon';
 import { VideoExport } from '../video-export';
+import { FrameRateControl } from '../frame-rate-control';
+import { ExportPanel } from '../export-panel';
+import { PresetManagerUI } from '../preset-manager';
+import { Timeline } from '../timeline';
+import { ThemeSelector } from '../theme-selector';
 import styles from './index.module.scss';
 
 interface PlayerProps {
@@ -23,6 +34,21 @@ export default function Player({ currentTime, doc }: PlayerProps) {
     })),
   );
 
+  const [showPresetManager, setShowPresetManager] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState({
+    export: true,
+    playback: true,
+    customize: false,
+  });
+
+  const toggleGroup = (group: keyof typeof expandedGroups) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+  };
   const duration = useMemo(() => getSumDuration(doc), [doc]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -45,36 +71,159 @@ export default function Player({ currentTime, doc }: PlayerProps) {
   return (
     <div className={styles.player}>
       <canvas ref={canvasRef} />
-      <div className={styles.playButtonWrap}>
+
+      {/* Playback Controls */}
+      <div className={styles.playbackControls}>
         <button
           type="button"
-          className={styles.playButton}
+          className={`${styles.playButton} ${playing ? styles.playing : ''}`}
           onClick={() => {
             setPlaying(!playing);
           }}
+          title={playing ? 'Pause' : 'Play'}
+          aria-label={playing ? 'Pause animation' : 'Play animation'}
         >
           <Icon name={playing ? pauseIcon : playIcon} />
         </button>
 
-        <div className={styles.controls}>
-          <VideoExport />
+        <input
+          type="range"
+          value={currentTime}
+          min={0}
+          max={duration}
+          className={styles.slider}
+          style={
+            {
+              '--progress-rate': currentTime / duration,
+            } as CSSProperties
+          }
+          onChange={(e) => {
+            setCurrentTime(Number(e.target.value));
+          }}
+        />
+      </div>
+
+      {/* Control Bar */}
+      <div className={styles.controlBar}>
+        {/* Export Controls Group */}
+        <div
+          className={`${styles.controlGroup} ${expandedGroups.export ? styles.expanded : styles.collapsed}`}
+        >
+          <button
+            className={styles.groupHeader}
+            onClick={() => toggleGroup('export')}
+            aria-expanded={expandedGroups.export}
+          >
+            <span className={styles.groupLabel}>📤 Export</span>
+            <span
+              className={`${styles.expandIcon} ${expandedGroups.export ? styles.rotated : ''}`}
+            >
+              ▼
+            </span>
+          </button>
+          <div className={styles.groupControls}>
+            <VideoExport />
+            <ExportPanel />
+          </div>
+        </div>
+
+        {/* Playback Controls Group */}
+        <div
+          className={`${styles.controlGroup} ${expandedGroups.playback ? styles.expanded : styles.collapsed}`}
+        >
+          <button
+            className={styles.groupHeader}
+            onClick={() => toggleGroup('playback')}
+            aria-expanded={expandedGroups.playback}
+          >
+            <span className={styles.groupLabel}>⏯️ Playback</span>
+            <span
+              className={`${styles.expandIcon} ${expandedGroups.playback ? styles.rotated : ''}`}
+            >
+              ▼
+            </span>
+          </button>
+          <div className={styles.groupControls}>
+            <FrameRateControl />
+            <button
+              type="button"
+              className={styles.controlButton}
+              onClick={() => setShowTimeline(!showTimeline)}
+              title="Toggle Timeline View"
+            >
+              📊 Timeline
+            </button>
+          </div>
+        </div>
+
+        {/* Customization Controls Group */}
+        <div
+          className={`${styles.controlGroup} ${expandedGroups.customize ? styles.expanded : styles.collapsed}`}
+        >
+          <button
+            className={styles.groupHeader}
+            onClick={() => toggleGroup('customize')}
+            aria-expanded={expandedGroups.customize}
+          >
+            <span className={styles.groupLabel}>🎨 Customize</span>
+            <span
+              className={`${styles.expandIcon} ${expandedGroups.customize ? styles.rotated : ''}`}
+            >
+              ▼
+            </span>
+          </button>
+          <div className={styles.groupControls}>
+            <button
+              type="button"
+              className={styles.controlButton}
+              onClick={() => setShowPresetManager(true)}
+              title="Manage Presets"
+            >
+              🎨 Presets
+            </button>
+            <button
+              type="button"
+              className={styles.controlButton}
+              onClick={() => setShowThemeSelector(true)}
+              title="Select Theme"
+            >
+              🎨 Themes
+            </button>
+          </div>
         </div>
       </div>
-      <input
-        type="range"
-        value={currentTime}
-        min={0}
-        max={duration}
-        className={styles.slider}
-        style={
-          {
-            '--progress-rate': currentTime / duration,
-          } as CSSProperties
-        }
-        onChange={(e) => {
-          setCurrentTime(Number(e.target.value));
-        }}
-      />
+
+      {showTimeline && (
+        <div className={styles.timelineContainer}>
+          <Timeline
+            height={200}
+            onTimeChange={setCurrentTime}
+            onPlaybackStateChange={(state) => {
+              setPlaying(state === 'playing');
+            }}
+          />
+        </div>
+      )}
+
+      {showPresetManager && (
+        <PresetManagerUI
+          onPresetApply={(preset) => {
+            // Apply preset logic would go here
+            console.log('Applying preset:', preset);
+            setShowPresetManager(false);
+          }}
+          onClose={() => setShowPresetManager(false)}
+        />
+      )}
+
+      {showThemeSelector && (
+        <ThemeSelector
+          onThemeChange={(theme) => {
+            console.log('Theme changed:', theme);
+          }}
+          onClose={() => setShowThemeSelector(false)}
+        />
+      )}
     </div>
   );
 }

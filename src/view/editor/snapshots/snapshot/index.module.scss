@@ -1,5 +1,23 @@
 .snapshotWrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 4px;
+
+  @media (max-width: 768px) {
+    margin: 0 2px;
+  }
+
+  @media (max-width: 480px) {
+    margin: 0 1px;
+  }
+}
+
+.snapshotHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .snapshot {
@@ -52,6 +70,20 @@
     .progress {
       opacity: 1;
     }
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    margin: 10px 6px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    margin: 8px 4px;
+    font-size: 12px;
   }
 }
 

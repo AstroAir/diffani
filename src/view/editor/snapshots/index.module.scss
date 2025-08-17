@@ -2,11 +2,56 @@
   display: flex;
   overflow-x: auto;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-shrink: 0;
+  padding: 8px 0;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  margin: 8px 0;
+
+  @media (max-width: 768px) {
+    justify-content: flex-start;
+    padding: 6px 0;
+    margin: 6px 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px 0;
+    gap: 2px;
+    margin: 4px 0;
+    border-radius: 6px;
+  }
+
+  // Add scrollbar styling for better mobile experience
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  }
 }
 
 .add {
   font-size: 20px;
   color: #fff;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 }

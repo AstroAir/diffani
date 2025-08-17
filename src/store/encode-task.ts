@@ -40,9 +40,10 @@ export const createEncodeSlice: StateCreator<
   encodeState: null,
 
   startEncodeTask: () => {
-    const { doc, abortEncodeTask } = get();
+    const { doc, frameRate, abortEncodeTask, updateFPSMonitoring } = get();
     abortEncodeTask();
     const encoder = new VideoEncoder(doc, {
+      frameRate,
       onProgress: (progress) => {
         set((state) => {
           if (
@@ -60,6 +61,9 @@ export const createEncodeSlice: StateCreator<
             },
           };
         });
+      },
+      onFPSUpdate: (actualFPS, frameDrops) => {
+        updateFPSMonitoring(actualFPS, frameDrops);
       },
     });
 
