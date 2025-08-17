@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { X } from 'lucide-react';
 import {
   KeyboardShortcutManager,
   type KeyboardShortcutGroup,
 } from '../../utils/keyboard';
 import { useKeyboardShortcut } from '../../utils/keyboard';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
+import { Input } from './input';
+import { Button } from './button';
 import styles from './KeyboardShortcutsHelp.module.scss';
 
 export interface KeyboardShortcutsHelpProps {
@@ -123,31 +127,24 @@ export default function KeyboardShortcutsHelp({
   }, []);
 
   return (
-    <div
-      className={`${styles.overlay} ${className || ''}`}
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="shortcuts-title"
-    >
-      <div className={styles.modal}>
-        <div className={styles.header}>
-          <h2 id="shortcuts-title" className={styles.title}>
-            Keyboard Shortcuts
-          </h2>
-          <button
-            type="button"
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className={`${styles.modal} ${className || ''}`}>
+        <DialogHeader>
+          <DialogTitle className={styles.title}>Keyboard Shortcuts</DialogTitle>
+          <Button
+            variant="ghost"
+            size="icon"
             className={styles.closeButton}
             onClick={onClose}
             aria-label="Close keyboard shortcuts help"
           >
-            ×
-          </button>
-        </div>
+            <X className="h-4 w-4" />
+          </Button>
+        </DialogHeader>
 
         <div className={styles.controls}>
           <div className={styles.searchContainer}>
-            <input
+            <Input
               type="text"
               placeholder="Search shortcuts..."
               value={searchTerm}
@@ -156,14 +153,15 @@ export default function KeyboardShortcutsHelp({
               aria-label="Search keyboard shortcuts"
             />
             {searchTerm && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 className={styles.clearButton}
                 onClick={clearSearch}
                 aria-label="Clear search"
               >
-                ×
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             )}
           </div>
 
@@ -232,8 +230,8 @@ export default function KeyboardShortcutsHelp({
             Press <kbd>Escape</kbd> to close
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

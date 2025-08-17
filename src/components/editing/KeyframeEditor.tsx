@@ -1,7 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useStore } from '../../store';
-import { type Keyframe, type AnimationProperty, PropertyType } from '../../core/timeline/types';
+import { Input } from '../ui/input';
+import { Checkbox } from '../ui/checkbox';
+import {
+  type Keyframe,
+  type AnimationProperty,
+  PropertyType,
+} from '../../core/timeline/types';
 import { getEasingFunction } from '../../core/transition/easing';
 import styles from './KeyframeEditor.module.scss';
 
@@ -42,11 +48,14 @@ function KeyframeItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(keyframe.value);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    onSelect(true);
-  }, [onSelect]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsDragging(true);
+      onSelect(true);
+    },
+    [onSelect],
+  );
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
@@ -58,22 +67,25 @@ function KeyframeItem({
     setIsEditing(false);
   }, [editValue, onUpdate]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleValueSubmit();
-    } else if (e.key === 'Escape') {
-      setIsEditing(false);
-      setEditValue(keyframe.value);
-    } else if (e.key === 'Delete') {
-      onDelete();
-    }
-  }, [handleValueSubmit, keyframe.value, onDelete]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleValueSubmit();
+      } else if (e.key === 'Escape') {
+        setIsEditing(false);
+        setEditValue(keyframe.value);
+      } else if (e.key === 'Delete') {
+        onDelete();
+      }
+    },
+    [handleValueSubmit, keyframe.value, onDelete],
+  );
 
   const renderValueEditor = () => {
     switch (property.type) {
       case PropertyType.NUMBER:
         return (
-          <input
+          <Input
             type="number"
             value={editValue as number}
             onChange={(e) => setEditValue(Number(e.target.value))}
@@ -100,12 +112,11 @@ function KeyframeItem({
         );
       case PropertyType.BOOLEAN:
         return (
-          <input
-            type="checkbox"
+          <Checkbox
             checked={editValue as boolean}
-            onChange={(e) => {
-              setEditValue(e.target.checked);
-              onUpdate({ value: e.target.checked });
+            onCheckedChange={(checked) => {
+              setEditValue(checked);
+              onUpdate({ value: checked });
               setIsEditing(false);
             }}
             className={styles.booleanInput}
@@ -114,7 +125,7 @@ function KeyframeItem({
         );
       default:
         return (
-          <input
+          <Input
             type="text"
             value={String(editValue)}
             onChange={(e) => setEditValue(e.target.value)}
@@ -138,11 +149,9 @@ function KeyframeItem({
       title={`Time: ${keyframe.time}ms, Value: ${keyframe.value}`}
     >
       <div className={styles.keyframeHandle} />
-      
+
       {isEditing && (
-        <div className={styles.valueEditor}>
-          {renderValueEditor()}
-        </div>
+        <div className={styles.valueEditor}>{renderValueEditor()}</div>
       )}
 
       {isSelected && (
@@ -190,7 +199,7 @@ export default function KeyframeEditor({
     (time: number) => {
       return (time / timelineDuration) * timelineWidth;
     },
-    [timelineDuration, timelineWidth]
+    [timelineDuration, timelineWidth],
   );
 
   // Convert pixel position to time
@@ -198,7 +207,7 @@ export default function KeyframeEditor({
     (pixel: number) => {
       return (pixel / timelineWidth) * timelineDuration;
     },
-    [timelineWidth, timelineDuration]
+    [timelineWidth, timelineDuration],
   );
 
   // Handle timeline click to add keyframe
@@ -214,7 +223,7 @@ export default function KeyframeEditor({
       const currentValue = property.defaultValue;
       onKeyframeAdd(time, currentValue);
     },
-    [pixelToTime, property.defaultValue, onKeyframeAdd]
+    [pixelToTime, property.defaultValue, onKeyframeAdd],
   );
 
   // Handle keyframe dragging
@@ -228,7 +237,10 @@ export default function KeyframeEditor({
       const x = e.clientX - rect.left;
       const deltaX = x - dragStartX;
       const deltaTime = pixelToTime(deltaX) - pixelToTime(0);
-      const newTime = Math.max(0, Math.min(timelineDuration, dragStartTime + deltaTime));
+      const newTime = Math.max(
+        0,
+        Math.min(timelineDuration, dragStartTime + deltaTime),
+      );
 
       onKeyframeUpdate(draggedKeyframe, { time: newTime });
     };
@@ -259,13 +271,13 @@ export default function KeyframeEditor({
   const handleKeyframeMouseDown = useCallback(
     (keyframeId: string, e: React.MouseEvent) => {
       e.stopPropagation();
-      
+
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
-      const keyframe = property.keyframes.find(k => k.id === keyframeId);
-      
+      const keyframe = property.keyframes.find((k) => k.id === keyframeId);
+
       if (keyframe) {
         setDraggedKeyframe(keyframeId);
         setDragStartX(x);
@@ -273,26 +285,28 @@ export default function KeyframeEditor({
         onKeyframeSelect(keyframeId, true);
       }
     },
-    [property.keyframes, onKeyframeSelect]
+    [property.keyframes, onKeyframeSelect],
   );
 
   // Render property curve (simplified)
   const renderPropertyCurve = () => {
     if (property.keyframes.length < 2) return null;
 
-    const sortedKeyframes = [...property.keyframes].sort((a, b) => a.time - b.time);
+    const sortedKeyframes = [...property.keyframes].sort(
+      (a, b) => a.time - b.time,
+    );
     let pathData = '';
 
     sortedKeyframes.forEach((keyframe, index) => {
       const x = timeToPixel(keyframe.time);
       const y = 50; // Simplified - would need proper value-to-pixel conversion
-      
+
       if (index === 0) {
         pathData += `M ${x} ${y}`;
       } else {
         const prevKeyframe = sortedKeyframes[index - 1];
         const prevX = timeToPixel(prevKeyframe.time);
-        
+
         if (keyframe.easing) {
           // Create bezier curve based on easing
           const easingFunc = getEasingFunction(keyframe.easing);
@@ -300,7 +314,7 @@ export default function KeyframeEditor({
           const controlY1 = 50 - easingFunc(0.33) * 20;
           const controlX2 = prevX + (x - prevX) * 0.66;
           const controlY2 = 50 - easingFunc(0.66) * 20;
-          
+
           pathData += ` C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${x} ${y}`;
         } else {
           pathData += ` L ${x} ${y}`;
@@ -373,16 +387,18 @@ export default function KeyframeEditor({
       <div className={styles.propertyControls}>
         <div className={styles.controlGroup}>
           <label>Default:</label>
-          <span className={styles.defaultValue}>{String(property.defaultValue)}</span>
+          <span className={styles.defaultValue}>
+            {String(property.defaultValue)}
+          </span>
         </div>
-        
+
         {property.min !== undefined && (
           <div className={styles.controlGroup}>
             <label>Min:</label>
             <span>{property.min}</span>
           </div>
         )}
-        
+
         {property.max !== undefined && (
           <div className={styles.controlGroup}>
             <label>Max:</label>

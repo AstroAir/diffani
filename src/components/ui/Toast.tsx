@@ -1,4 +1,13 @@
-import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+  ReactNode,
+} from 'react';
+import { Button } from './button';
+import { X } from 'lucide-react';
 import styles from './Toast.module.scss';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -39,31 +48,34 @@ interface ToastProviderProps {
   defaultDuration?: number;
 }
 
-export function ToastProvider({ 
-  children, 
-  maxToasts = 5, 
-  defaultDuration = 5000 
+export function ToastProvider({
+  children,
+  maxToasts = 5,
+  defaultDuration = 5000,
 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newToast: Toast = {
-      ...toast,
-      id,
-      duration: toast.duration ?? defaultDuration,
-    };
+  const addToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newToast: Toast = {
+        ...toast,
+        id,
+        duration: toast.duration ?? defaultDuration,
+      };
 
-    setToasts(prev => {
-      const updated = [newToast, ...prev];
-      return updated.slice(0, maxToasts);
-    });
+      setToasts((prev) => {
+        const updated = [newToast, ...prev];
+        return updated.slice(0, maxToasts);
+      });
 
-    return id;
-  }, [maxToasts, defaultDuration]);
+      return id;
+    },
+    [maxToasts, defaultDuration],
+  );
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   const clearAllToasts = useCallback(() => {
@@ -71,7 +83,9 @@ export function ToastProvider({
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast, clearAllToasts }}>
+    <ToastContext.Provider
+      value={{ toasts, addToast, removeToast, clearAllToasts }}
+    >
       {children}
       <ToastContainer />
     </ToastContext.Provider>
@@ -83,7 +97,7 @@ function ToastContainer() {
 
   return (
     <div className={styles.toastContainer}>
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} />
       ))}
     </div>
@@ -145,10 +159,8 @@ function ToastItem({ toast }: ToastItemProps) {
       aria-live="polite"
     >
       <div className={styles.toastContent}>
-        <div className={styles.toastIcon}>
-          {getIcon()}
-        </div>
-        
+        <div className={styles.toastIcon}>{getIcon()}</div>
+
         <div className={styles.toastText}>
           {toast.title && (
             <div className={styles.toastTitle}>{toast.title}</div>
@@ -157,31 +169,33 @@ function ToastItem({ toast }: ToastItemProps) {
         </div>
 
         {toast.action && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             className={styles.toastAction}
             onClick={toast.action.onClick}
           >
             {toast.action.label}
-          </button>
+          </Button>
         )}
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           className={styles.toastClose}
           onClick={handleClose}
           aria-label="Close notification"
         >
-          ✕
-        </button>
+          <X className="h-4 w-4" />
+        </Button>
       </div>
 
       {!toast.persistent && toast.duration && (
-        <div 
+        <div
           className={styles.toastProgress}
-          style={{ 
+          style={{
             animationDuration: `${toast.duration}ms`,
-            animationPlayState: isExiting ? 'paused' : 'running'
+            animationPlayState: isExiting ? 'paused' : 'running',
           }}
         />
       )}
@@ -193,21 +207,33 @@ function ToastItem({ toast }: ToastItemProps) {
 export const useToastHelpers = () => {
   const { addToast } = useToast();
 
-  const success = useCallback((message: string, options?: Partial<Toast>) => {
-    return addToast({ ...options, type: 'success', message });
-  }, [addToast]);
+  const success = useCallback(
+    (message: string, options?: Partial<Toast>) => {
+      return addToast({ ...options, type: 'success', message });
+    },
+    [addToast],
+  );
 
-  const error = useCallback((message: string, options?: Partial<Toast>) => {
-    return addToast({ ...options, type: 'error', message, persistent: true });
-  }, [addToast]);
+  const error = useCallback(
+    (message: string, options?: Partial<Toast>) => {
+      return addToast({ ...options, type: 'error', message, persistent: true });
+    },
+    [addToast],
+  );
 
-  const warning = useCallback((message: string, options?: Partial<Toast>) => {
-    return addToast({ ...options, type: 'warning', message });
-  }, [addToast]);
+  const warning = useCallback(
+    (message: string, options?: Partial<Toast>) => {
+      return addToast({ ...options, type: 'warning', message });
+    },
+    [addToast],
+  );
 
-  const info = useCallback((message: string, options?: Partial<Toast>) => {
-    return addToast({ ...options, type: 'info', message });
-  }, [addToast]);
+  const info = useCallback(
+    (message: string, options?: Partial<Toast>) => {
+      return addToast({ ...options, type: 'info', message });
+    },
+    [addToast],
+  );
 
   return { success, error, warning, info };
 };

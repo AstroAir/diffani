@@ -6,9 +6,12 @@ import {
   useState,
 } from 'react';
 import { useShallow } from 'zustand/shallow';
+import { Play, Pause } from 'lucide-react';
 import { getSumDuration, type RawDoc } from '../../core/doc/raw-doc';
 import { MovieRenderer } from '../../core/renderer';
 import { useStore } from '../../store';
+import { Button } from '../../components/ui/button';
+import { Slider } from '../../components/ui/slider';
 import playIcon from '../../assets/icons/play.svg';
 import pauseIcon from '../../assets/icons/pause.svg';
 import Icon from '../icon';
@@ -74,8 +77,9 @@ export default function Player({ currentTime, doc }: PlayerProps) {
 
       {/* Playback Controls */}
       <div className={styles.playbackControls}>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="icon"
           className={`${styles.playButton} ${playing ? styles.playing : ''}`}
           onClick={() => {
             setPlaying(!playing);
@@ -83,22 +87,21 @@ export default function Player({ currentTime, doc }: PlayerProps) {
           title={playing ? 'Pause' : 'Play'}
           aria-label={playing ? 'Pause animation' : 'Play animation'}
         >
-          <Icon name={playing ? pauseIcon : playIcon} />
-        </button>
+          {playing ? (
+            <Pause className="h-6 w-6" />
+          ) : (
+            <Play className="h-6 w-6" />
+          )}
+        </Button>
 
-        <input
-          type="range"
-          value={currentTime}
+        <Slider
+          value={[currentTime]}
           min={0}
           max={duration}
+          step={1}
           className={styles.slider}
-          style={
-            {
-              '--progress-rate': currentTime / duration,
-            } as CSSProperties
-          }
-          onChange={(e) => {
-            setCurrentTime(Number(e.target.value));
+          onValueChange={(value) => {
+            setCurrentTime(value[0]);
           }}
         />
       </div>

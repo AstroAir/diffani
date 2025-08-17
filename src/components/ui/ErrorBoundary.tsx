@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from 'react';
+import { Button } from './button';
 import styles from './ErrorBoundary.module.scss';
 
 interface ErrorBoundaryState {
@@ -13,7 +14,10 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export default class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -73,14 +77,14 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             <p className={styles.errorMessage}>
               An unexpected error occurred while rendering this component.
             </p>
-            
+
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className={styles.errorDetails}>
                 <summary className={styles.errorSummary}>Error Details</summary>
                 <div className={styles.errorStack}>
                   <h4>Error:</h4>
                   <pre>{this.state.error.toString()}</pre>
-                  
+
                   {this.state.errorInfo && (
                     <>
                       <h4>Component Stack:</h4>
@@ -90,22 +94,22 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                 </div>
               </details>
             )}
-            
+
             <div className={styles.errorActions}>
-              <button
-                type="button"
+              <Button
+                variant="default"
                 className={styles.retryButton}
                 onClick={this.handleRetry}
               >
                 Try Again
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="outline"
                 className={styles.reloadButton}
                 onClick={this.handleReload}
               >
                 Reload Page
-              </button>
+              </Button>
             </div>
           </div>
         </div>

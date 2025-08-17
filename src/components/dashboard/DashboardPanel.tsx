@@ -1,4 +1,7 @@
 import { ReactNode, useState, useRef, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import styles from './DashboardPanel.module.scss';
 
 export interface DashboardPanelProps {
@@ -31,7 +34,12 @@ export default function DashboardPanel({
   const [collapsed, setCollapsed] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  const resizeStartRef = useRef<{ x: number; y: number; width: number; height: number } | null>(null);
+  const resizeStartRef = useRef<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   const handleCollapseToggle = useCallback(() => {
     const newCollapsed = !collapsed;
@@ -39,74 +47,80 @@ export default function DashboardPanel({
     onCollapse?.(newCollapsed);
   }, [collapsed, onCollapse]);
 
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    if (!resizable || !panelRef.current) return;
-    
-    e.preventDefault();
-    const rect = panelRef.current.getBoundingClientRect();
-    resizeStartRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      width: rect.width,
-      height: rect.height,
-    };
-    setIsResizing(true);
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      if (!resizable || !panelRef.current) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!resizeStartRef.current || !panelRef.current) return;
-      
-      const deltaX = e.clientX - resizeStartRef.current.x;
-      const deltaY = e.clientY - resizeStartRef.current.y;
-      const newWidth = Math.max(200, resizeStartRef.current.width + deltaX);
-      const newHeight = Math.max(150, resizeStartRef.current.height + deltaY);
-      
-      panelRef.current.style.width = `${newWidth}px`;
-      panelRef.current.style.height = `${newHeight}px`;
-      
-      onResize?.({ width: newWidth, height: newHeight });
-    };
+      e.preventDefault();
+      const rect = panelRef.current.getBoundingClientRect();
+      resizeStartRef.current = {
+        x: e.clientX,
+        y: e.clientY,
+        width: rect.width,
+        height: rect.height,
+      };
+      setIsResizing(true);
 
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      resizeStartRef.current = null;
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+      const handleMouseMove = (e: MouseEvent) => {
+        if (!resizeStartRef.current || !panelRef.current) return;
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [resizable, onResize]);
+        const deltaX = e.clientX - resizeStartRef.current.x;
+        const deltaY = e.clientY - resizeStartRef.current.y;
+        const newWidth = Math.max(200, resizeStartRef.current.width + deltaX);
+        const newHeight = Math.max(150, resizeStartRef.current.height + deltaY);
+
+        panelRef.current.style.width = `${newWidth}px`;
+        panelRef.current.style.height = `${newHeight}px`;
+
+        onResize?.({ width: newWidth, height: newHeight });
+      };
+
+      const handleMouseUp = () => {
+        setIsResizing(false);
+        resizeStartRef.current = null;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [resizable, onResize],
+  );
 
   return (
-    <div
+    <Card
       ref={panelRef}
       className={`${styles.dashboardPanel} ${className || ''} ${collapsed ? styles.collapsed : ''} ${isResizing ? styles.resizing : ''}`}
       data-panel-id={id}
     >
-      <div className={styles.panelHeader}>
+      <CardHeader className={styles.panelHeader}>
         <div className={styles.headerLeft}>
-          <h3 className={styles.panelTitle}>{title}</h3>
+          <CardTitle className={styles.panelTitle}>{title}</CardTitle>
           {loading && <div className={styles.loadingIndicator} />}
         </div>
-        
+
         <div className={styles.headerRight}>
           {actions && <div className={styles.panelActions}>{actions}</div>}
-          
+
           {collapsible && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               className={styles.collapseButton}
               onClick={handleCollapseToggle}
               aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
               title={collapsed ? 'Expand panel' : 'Collapse panel'}
             >
-              <span className={`${styles.collapseIcon} ${collapsed ? styles.collapsed : ''}`}>
-                ▼
-              </span>
-            </button>
+              {collapsed ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronUp className="h-4 w-4" />
+              )}
+            </Button>
           )}
         </div>
-      </div>
+      </CardHeader>
 
       {error && (
         <div className={styles.errorBanner}>
@@ -115,7 +129,9 @@ export default function DashboardPanel({
         </div>
       )}
 
-      <div className={`${styles.panelContent} ${collapsed ? styles.hidden : ''}`}>
+      <CardContent
+        className={`${styles.panelContent} ${collapsed ? styles.hidden : ''}`}
+      >
         {loading ? (
           <div className={styles.loadingState}>
             <div className={styles.spinner} />
@@ -124,7 +140,7 @@ export default function DashboardPanel({
         ) : (
           children
         )}
-      </div>
+      </CardContent>
 
       {resizable && !collapsed && (
         <div
@@ -133,6 +149,6 @@ export default function DashboardPanel({
           title="Drag to resize"
         />
       )}
-    </div>
+    </Card>
   );
 }

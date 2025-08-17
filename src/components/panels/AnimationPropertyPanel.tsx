@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useStore } from '../../store';
-import { 
-  type AnimationProperty, 
-  PropertyType, 
-  ANIMATION_PROPERTY_PRESETS 
+import { Input } from '../ui/input';
+import { Checkbox } from '../ui/checkbox';
+import { Slider } from '../ui/slider';
+import {
+  type AnimationProperty,
+  PropertyType,
+  ANIMATION_PROPERTY_PRESETS,
 } from '../../core/timeline/types';
 import { getEasingFunction } from '../../core/transition/easing';
 import styles from './AnimationPropertyPanel.module.scss';
@@ -23,24 +26,26 @@ interface PropertyControlProps {
 }
 
 function PropertyControl({ property, value, onChange }: PropertyControlProps) {
-  const handleChange = useCallback((newValue: unknown) => {
-    onChange(newValue);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (newValue: unknown) => {
+      onChange(newValue);
+    },
+    [onChange],
+  );
 
   switch (property.type) {
     case PropertyType.NUMBER:
       return (
         <div className={styles.numberControl}>
-          <input
-            type="range"
+          <Slider
             min={property.min || 0}
             max={property.max || 100}
             step={property.step || 1}
-            value={value as number}
-            onChange={(e) => handleChange(Number(e.target.value))}
+            value={[value as number]}
+            onValueChange={(values) => handleChange(values[0])}
             className={styles.slider}
           />
-          <input
+          <Input
             type="number"
             min={property.min}
             max={property.max}
@@ -61,7 +66,7 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
             onChange={(e) => handleChange(e.target.value)}
             className={styles.colorPicker}
           />
-          <input
+          <Input
             type="text"
             value={value as string}
             onChange={(e) => handleChange(e.target.value)}
@@ -77,19 +82,23 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
         <div className={styles.positionControl}>
           <div className={styles.positionAxis}>
             <label>X:</label>
-            <input
+            <Input
               type="number"
               value={position.x}
-              onChange={(e) => handleChange({ ...position, x: Number(e.target.value) })}
+              onChange={(e) =>
+                handleChange({ ...position, x: Number(e.target.value) })
+              }
               className={styles.positionInput}
             />
           </div>
           <div className={styles.positionAxis}>
             <label>Y:</label>
-            <input
+            <Input
               type="number"
               value={position.y}
-              onChange={(e) => handleChange({ ...position, y: Number(e.target.value) })}
+              onChange={(e) =>
+                handleChange({ ...position, y: Number(e.target.value) })
+              }
               className={styles.positionInput}
             />
           </div>
@@ -102,23 +111,27 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
         <div className={styles.scaleControl}>
           <div className={styles.scaleAxis}>
             <label>X:</label>
-            <input
+            <Input
               type="number"
               min="0"
               step="0.1"
               value={scale.x}
-              onChange={(e) => handleChange({ ...scale, x: Number(e.target.value) })}
+              onChange={(e) =>
+                handleChange({ ...scale, x: Number(e.target.value) })
+              }
               className={styles.scaleInput}
             />
           </div>
           <div className={styles.scaleAxis}>
             <label>Y:</label>
-            <input
+            <Input
               type="number"
               min="0"
               step="0.1"
               value={scale.y}
-              onChange={(e) => handleChange({ ...scale, y: Number(e.target.value) })}
+              onChange={(e) =>
+                handleChange({ ...scale, y: Number(e.target.value) })
+              }
               className={styles.scaleInput}
             />
           </div>
@@ -128,16 +141,15 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
     case PropertyType.ROTATION:
       return (
         <div className={styles.rotationControl}>
-          <input
-            type="range"
+          <Slider
             min={property.min || -360}
             max={property.max || 360}
             step={property.step || 1}
-            value={value as number}
-            onChange={(e) => handleChange(Number(e.target.value))}
+            value={[value as number]}
+            onValueChange={(values) => handleChange(values[0])}
             className={styles.rotationSlider}
           />
-          <input
+          <Input
             type="number"
             min={property.min}
             max={property.max}
@@ -153,16 +165,15 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
     case PropertyType.OPACITY:
       return (
         <div className={styles.opacityControl}>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={value as number}
-            onChange={(e) => handleChange(Number(e.target.value))}
+          <Slider
+            min={0}
+            max={1}
+            step={0.01}
+            value={[value as number]}
+            onValueChange={(values) => handleChange(values[0])}
             className={styles.opacitySlider}
           />
-          <input
+          <Input
             type="number"
             min="0"
             max="1"
@@ -177,10 +188,9 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
     case PropertyType.BOOLEAN:
       return (
         <div className={styles.booleanControl}>
-          <input
-            type="checkbox"
+          <Checkbox
             checked={value as boolean}
-            onChange={(e) => handleChange(e.target.checked)}
+            onCheckedChange={(checked) => handleChange(checked)}
             className={styles.booleanCheckbox}
           />
           <span className={styles.booleanLabel}>
@@ -192,7 +202,7 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
     case PropertyType.TEXT:
       return (
         <div className={styles.textControl}>
-          <input
+          <Input
             type="text"
             value={value as string}
             onChange={(e) => handleChange(e.target.value)}
@@ -205,7 +215,7 @@ function PropertyControl({ property, value, onChange }: PropertyControlProps) {
     default:
       return (
         <div className={styles.defaultControl}>
-          <input
+          <Input
             type="text"
             value={String(value)}
             onChange={(e) => handleChange(e.target.value)}
@@ -231,55 +241,65 @@ export default function AnimationPropertyPanel({
   const [currentValue, setCurrentValue] = useState<unknown>(null);
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const [newPropertyName, setNewPropertyName] = useState('');
-  const [newPropertyType, setNewPropertyType] = useState<PropertyType>(PropertyType.NUMBER);
+  const [newPropertyType, setNewPropertyType] = useState<PropertyType>(
+    PropertyType.NUMBER,
+  );
 
   // Update current value when property or time changes
   useEffect(() => {
     if (selectedProperty) {
       // Find the value at current time or use default
-      const keyframe = selectedProperty.keyframes.find(kf => kf.time === currentTime);
+      const keyframe = selectedProperty.keyframes.find(
+        (kf) => kf.time === currentTime,
+      );
       setCurrentValue(keyframe?.value || selectedProperty.defaultValue);
     }
   }, [selectedProperty, currentTime]);
 
-  const handleValueChange = useCallback((value: unknown) => {
-    setCurrentValue(value);
-    
-    if (selectedProperty && onPropertyUpdate) {
-      // Create or update keyframe at current time
-      const existingKeyframeIndex = selectedProperty.keyframes.findIndex(
-        kf => kf.time === currentTime
-      );
-      
-      const updatedKeyframes = [...selectedProperty.keyframes];
-      
-      if (existingKeyframeIndex >= 0) {
-        updatedKeyframes[existingKeyframeIndex] = {
-          ...updatedKeyframes[existingKeyframeIndex],
-          value,
-        };
-      } else {
-        updatedKeyframes.push({
-          id: `keyframe-${Date.now()}`,
-          time: currentTime,
-          value,
-          easing: 'easeInOut',
+  const handleValueChange = useCallback(
+    (value: unknown) => {
+      setCurrentValue(value);
+
+      if (selectedProperty && onPropertyUpdate) {
+        // Create or update keyframe at current time
+        const existingKeyframeIndex = selectedProperty.keyframes.findIndex(
+          (kf) => kf.time === currentTime,
+        );
+
+        const updatedKeyframes = [...selectedProperty.keyframes];
+
+        if (existingKeyframeIndex >= 0) {
+          updatedKeyframes[existingKeyframeIndex] = {
+            ...updatedKeyframes[existingKeyframeIndex],
+            value,
+          };
+        } else {
+          updatedKeyframes.push({
+            id: `keyframe-${Date.now()}`,
+            time: currentTime,
+            value,
+            easing: 'easeInOut',
+          });
+          updatedKeyframes.sort((a, b) => a.time - b.time);
+        }
+
+        onPropertyUpdate({
+          ...selectedProperty,
+          keyframes: updatedKeyframes,
         });
-        updatedKeyframes.sort((a, b) => a.time - b.time);
       }
-      
-      onPropertyUpdate({
-        ...selectedProperty,
-        keyframes: updatedKeyframes,
-      });
-    }
-  }, [selectedProperty, currentTime, onPropertyUpdate]);
+    },
+    [selectedProperty, currentTime, onPropertyUpdate],
+  );
 
   const handleCreateProperty = useCallback(() => {
     if (!newPropertyName.trim() || !onPropertyCreate) return;
 
-    const preset = ANIMATION_PROPERTY_PRESETS[newPropertyType.toUpperCase() as keyof typeof ANIMATION_PROPERTY_PRESETS];
-    
+    const preset =
+      ANIMATION_PROPERTY_PRESETS[
+        newPropertyType.toUpperCase() as keyof typeof ANIMATION_PROPERTY_PRESETS
+      ];
+
     const newProperty: AnimationProperty = {
       id: `property-${Date.now()}`,
       name: newPropertyName.trim(),
@@ -303,7 +323,7 @@ export default function AnimationPropertyPanel({
     }
   }, [selectedProperty, onPropertyDelete]);
 
-  const propertyTypeOptions = Object.values(PropertyType).map(type => ({
+  const propertyTypeOptions = Object.values(PropertyType).map((type) => ({
     value: type,
     label: type.charAt(0).toUpperCase() + type.slice(1),
   }));
@@ -326,7 +346,7 @@ export default function AnimationPropertyPanel({
         <div className={styles.createPropertyForm}>
           <div className={styles.formGroup}>
             <label>Property Name:</label>
-            <input
+            <Input
               type="text"
               value={newPropertyName}
               onChange={(e) => setNewPropertyName(e.target.value)}
@@ -335,22 +355,24 @@ export default function AnimationPropertyPanel({
               autoFocus
             />
           </div>
-          
+
           <div className={styles.formGroup}>
             <label>Property Type:</label>
             <select
               value={newPropertyType}
-              onChange={(e) => setNewPropertyType(e.target.value as PropertyType)}
+              onChange={(e) =>
+                setNewPropertyType(e.target.value as PropertyType)
+              }
               className={styles.propertyTypeSelect}
             >
-              {propertyTypeOptions.map(option => (
+              {propertyTypeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
           </div>
-          
+
           <div className={styles.formActions}>
             <button
               type="button"
@@ -380,7 +402,9 @@ export default function AnimationPropertyPanel({
           <div className={styles.propertyHeader}>
             <div className={styles.propertyInfo}>
               <h4 className={styles.propertyName}>{selectedProperty.name}</h4>
-              <span className={styles.propertyType}>{selectedProperty.type}</span>
+              <span className={styles.propertyType}>
+                {selectedProperty.type}
+              </span>
             </div>
             <button
               type="button"
@@ -430,7 +454,8 @@ export default function AnimationPropertyPanel({
         <div className={styles.noSelection}>
           <p>No property selected</p>
           <p className={styles.hint}>
-            Select a property from the timeline or create a new one to start editing.
+            Select a property from the timeline or create a new one to start
+            editing.
           </p>
         </div>
       )}

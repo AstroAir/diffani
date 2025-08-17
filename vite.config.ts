@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import { run as runCssDts } from 'typed-css-modules';
 import react from '@vitejs/plugin-react';
 import createSvgSpritePlugin from 'vite-plugin-svg-sprite';
+import tailwindcss from '@tailwindcss/vite';
 
 const isDev = process.env.NODE_ENV === 'development';
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
@@ -19,6 +20,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '#': srcDir,
+      '@': path.resolve(__dirname, './src'),
     },
   },
   plugins: [
@@ -27,6 +29,7 @@ export default defineConfig({
       symbolId: 'icon-[name]-[hash]',
       include: '**/icons/*.svg',
     }),
+    tailwindcss(),
   ],
   server: {
     port: 10001,

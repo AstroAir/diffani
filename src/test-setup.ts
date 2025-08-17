@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
+import '@testing-library/jest-dom';
 
-// Mock browser APIs
-global.window = global.window || {};
-global.document = global.document || {};
+// jsdom provides window and document, so we don't need to mock them
+// Only mock specific APIs that jsdom doesn't provide or that we need to customize
 
 // Mock localStorage
 const localStorageMock = {
@@ -153,28 +153,8 @@ global.URL = {
   revokeObjectURL: vi.fn(),
 } as any;
 
-// Mock document methods
-const mockElement = {
-  href: '',
-  download: '',
-  style: { display: '' },
-  click: vi.fn(),
-  draggable: true,
-  ondragstart: null,
-  ondrop: null,
-};
-
-global.document = {
-  createElement: vi.fn(() => mockElement),
-  getElementsByTagName: vi.fn(() => []),
-  querySelectorAll: vi.fn(() => []),
-  querySelector: vi.fn(() => null),
-  body: {
-    appendChild: vi.fn(),
-    removeChild: vi.fn(),
-    querySelectorAll: vi.fn(() => []),
-  },
-} as any;
+// jsdom provides document and its methods, so we don't need to override them
+// Only add specific mocks if needed for particular test cases
 
 // Mock code languages to avoid CodeMirror/PrismJS dependencies
 vi.mock('../src/core/code-languages/languages', () => ({
@@ -381,6 +361,35 @@ global.AbortSignal = class AbortSignal extends EventTarget {
 global.performance = {
   now: vi.fn(() => Date.now()),
 } as any;
+
+// Mock ResizeObserver for shadcn/ui components
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock IntersectionObserver for shadcn/ui components
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock matchMedia for responsive components
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 // Mock console methods to reduce noise in tests
 global.console = {

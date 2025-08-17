@@ -1,5 +1,13 @@
-import React, { Suspense, lazy, ComponentType, useRef, useEffect, useState } from 'react';
+import React, {
+  Suspense,
+  lazy,
+  ComponentType,
+  useRef,
+  useEffect,
+  useState,
+} from 'react';
 import { useLazyLoading, usePerformanceMonitor } from '../../utils/performance';
+import { Button } from './button';
 import LoadingSpinner from './LoadingSpinner';
 import styles from './LazyComponent.module.scss';
 
@@ -23,67 +31,85 @@ export interface LazyLoadOptions {
 // Higher-order component for lazy loading
 export function withLazyLoading<P extends object>(
   Component: ComponentType<P>,
-  options: LazyLoadOptions = {}
+  options: LazyLoadOptions = {},
 ) {
-  const LazyWrappedComponent = React.forwardRef<any, P & LazyComponentProps>((props, ref) => {
-    const { threshold = 0.1, fallback, onLoad, onError, className, ...componentProps } = props;
-    const [hasLoaded, setHasLoaded] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
-    
-    const { elementRef, isVisible, addCallback, removeCallback } = useLazyLoading(threshold);
-    usePerformanceMonitor(`LazyComponent(${Component.displayName || Component.name})`);
+  const LazyWrappedComponent = React.forwardRef<any, P & LazyComponentProps>(
+    (props, ref) => {
+      const {
+        threshold = 0.1,
+        fallback,
+        onLoad,
+        onError,
+        className,
+        ...componentProps
+      } = props;
+      const [hasLoaded, setHasLoaded] = useState(false);
+      const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-      const loadCallback = () => {
-        if (!hasLoaded) {
-          setHasLoaded(true);
-          onLoad?.();
-        }
+      const { elementRef, isVisible, addCallback, removeCallback } =
+        useLazyLoading(threshold);
+      usePerformanceMonitor(
+        `LazyComponent(${Component.displayName || Component.name})`,
+      );
+
+      useEffect(() => {
+        const loadCallback = () => {
+          if (!hasLoaded) {
+            setHasLoaded(true);
+            onLoad?.();
+          }
+        };
+
+        addCallback(loadCallback);
+        return () => removeCallback(loadCallback);
+      }, [hasLoaded, onLoad, addCallback, removeCallback]);
+
+      const handleError = (err: Error) => {
+        setError(err);
+        onError?.(err);
       };
 
-      addCallback(loadCallback);
-      return () => removeCallback(loadCallback);
-    }, [hasLoaded, onLoad, addCallback, removeCallback]);
-
-    const handleError = (err: Error) => {
-      setError(err);
-      onError?.(err);
-    };
-
-    if (error) {
-      return (
-        <div className={`${styles.lazyComponent} ${styles.error} ${className || ''}`} ref={elementRef}>
-          <div className={styles.errorContent}>
-            <h3>Failed to load component</h3>
-            <p>{error.message}</p>
-            <button 
-              onClick={() => {
-                setError(null);
-                setHasLoaded(false);
-              }}
-              className={styles.retryButton}
-            >
-              Retry
-            </button>
+      if (error) {
+        return (
+          <div
+            className={`${styles.lazyComponent} ${styles.error} ${className || ''}`}
+            ref={elementRef}
+          >
+            <div className={styles.errorContent}>
+              <h3>Failed to load component</h3>
+              <p>{error.message}</p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  setHasLoaded(false);
+                }}
+                className={styles.retryButton}
+              >
+                Retry
+              </button>
+            </div>
           </div>
+        );
+      }
+
+      return (
+        <div
+          className={`${styles.lazyComponent} ${className || ''}`}
+          ref={elementRef}
+        >
+          {hasLoaded ? (
+            <Suspense fallback={fallback || <LoadingSpinner />}>
+              <Component {...(componentProps as P)} ref={ref} />
+            </Suspense>
+          ) : (
+            <div className={styles.placeholder}>
+              {fallback || <LoadingSpinner />}
+            </div>
+          )}
         </div>
       );
-    }
-
-    return (
-      <div className={`${styles.lazyComponent} ${className || ''}`} ref={elementRef}>
-        {hasLoaded ? (
-          <Suspense fallback={fallback || <LoadingSpinner />}>
-            <Component {...(componentProps as P)} ref={ref} />
-          </Suspense>
-        ) : (
-          <div className={styles.placeholder}>
-            {fallback || <LoadingSpinner />}
-          </div>
-        )}
-      </div>
-    );
-  });
+    },
+  );
 
   LazyWrappedComponent.displayName = `LazyLoaded(${Component.displayName || Component.name})`;
   return LazyWrappedComponent;
@@ -103,8 +129,9 @@ export default function LazyComponent({
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { elementRef, isVisible, addCallback, removeCallback } = useLazyLoading(threshold);
+
+  const { elementRef, isVisible, addCallback, removeCallback } =
+    useLazyLoading(threshold);
   usePerformanceMonitor('LazyComponent');
 
   useEffect(() => {
@@ -138,32 +165,35 @@ export default function LazyComponent({
 
   if (error) {
     return (
-      <div 
-        className={`${styles.lazyComponent} ${styles.error} ${className || ''}`} 
+      <div
+        className={`${styles.lazyComponent} ${styles.error} ${className || ''}`}
         ref={elementRef}
         style={{ minHeight }}
       >
         <div className={styles.errorContent}>
           <h3>Failed to load content</h3>
           <p>{error.message}</p>
-          <button onClick={handleRetry} className={styles.retryButton}>
+          <Button
+            onClick={handleRetry}
+            className={styles.retryButton}
+            variant="outline"
+            size="sm"
+          >
             Retry
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
-      className={`${styles.lazyComponent} ${className || ''}`} 
+    <div
+      className={`${styles.lazyComponent} ${className || ''}`}
       ref={elementRef}
       style={{ minHeight }}
     >
       {isLoaded ? (
-        <div className={styles.content}>
-          {children}
-        </div>
+        <div className={styles.content}>{children}</div>
       ) : (
         <div className={styles.placeholder} style={{ minHeight }}>
           {placeholder || fallback || <LoadingSpinner />}
@@ -176,37 +206,37 @@ export default function LazyComponent({
 // Utility function to create lazy-loaded components
 export function createLazyComponent<P extends object>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
-  options: LazyLoadOptions = {}
+  options: LazyLoadOptions = {},
 ) {
   const LazyLoadedComponent = lazy(importFn);
-  
+
   return withLazyLoading(LazyLoadedComponent, options);
 }
 
 // Pre-built lazy components for common heavy components
 export const LazyEnhancedTimeline = createLazyComponent(
   () => import('../editing/EnhancedTimeline'),
-  { threshold: 0.2 }
+  { threshold: 0.2 },
 );
 
 export const LazyVirtualizedTimeline = createLazyComponent(
   () => import('../editing/VirtualizedTimeline'),
-  { threshold: 0.2 }
+  { threshold: 0.2 },
 );
 
 export const LazyAnimationPropertyPanel = createLazyComponent(
   () => import('../panels/AnimationPropertyPanel'),
-  { threshold: 0.1 }
+  { threshold: 0.1 },
 );
 
 export const LazyVisualEffectsPanel = createLazyComponent(
   () => import('../panels/VisualEffectsPanel'),
-  { threshold: 0.1 }
+  { threshold: 0.1 },
 );
 
 export const LazyKeyframeEditor = createLazyComponent(
   () => import('../editing/KeyframeEditor'),
-  { threshold: 0.1 }
+  { threshold: 0.1 },
 );
 
 // Intersection Observer-based lazy loading hook for images
@@ -221,16 +251,16 @@ export function useLazyImage(src: string, options: LazyLoadOptions = {}) {
   useEffect(() => {
     if (isVisible && !imageSrc && !error) {
       const img = new Image();
-      
+
       img.onload = () => {
         setImageSrc(src);
         setIsLoaded(true);
       };
-      
+
       img.onerror = () => {
         setError(new Error(`Failed to load image: ${src}`));
       };
-      
+
       img.src = src;
     }
   }, [isVisible, src, imageSrc, error]);
@@ -251,7 +281,7 @@ export function useLazyImage(src: string, options: LazyLoadOptions = {}) {
 // Lazy loading for code splitting
 export function useLazyModule<T>(
   importFn: () => Promise<T>,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ) {
   const [module, setModule] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -267,7 +297,8 @@ export function useLazyModule<T>(
       const loadedModule = await importFn();
       setModule(loadedModule);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to load module');
+      const error =
+        err instanceof Error ? err : new Error('Failed to load module');
       setError(error);
     } finally {
       setIsLoading(false);
@@ -293,7 +324,7 @@ export function usePerformantLoader<T>(
     delay?: number;
     timeout?: number;
     retries?: number;
-  } = {}
+  } = {},
 ) {
   const { delay = 0, timeout = 10000, retries = 3 } = options;
   const [data, setData] = useState<T | null>(null);
@@ -310,7 +341,7 @@ export function usePerformantLoader<T>(
     try {
       // Add delay if specified
       if (delay > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
 
       // Create timeout promise
@@ -324,9 +355,9 @@ export function usePerformantLoader<T>(
       setAttempt(0);
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Load failed');
-      
+
       if (attempt < retries) {
-        setAttempt(prev => prev + 1);
+        setAttempt((prev) => prev + 1);
         // Exponential backoff
         setTimeout(() => load(), Math.pow(2, attempt) * 1000);
       } else {
